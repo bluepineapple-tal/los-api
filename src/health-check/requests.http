@@ -1,0 +1,2 @@
+### Get the db health
+GET http://localhost:8000/health/db
