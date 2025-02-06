@@ -1,0 +1,14 @@
+# List all loan applications
+GET http://localhost:8000/loan-applications
+
+# Get a specific loan application by ID
+GET http://localhost:8000/loan-applications/:id	
+
+# Create a new loan application
+POST http://localhost:8000/loan-applications
+
+#Update a specific loan application
+PUT http://localhost:8000/loan-applications/:id
+
+# Delete a specific loan application
+DELETE http://localhost:8000/loan-applications/:id
