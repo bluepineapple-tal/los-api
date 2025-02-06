@@ -8,19 +8,14 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
 
   createTypeOrmOptions(): Promise<TypeOrmModuleOptions> | TypeOrmModuleOptions {
     if (process.env.NODE_ENV === 'development') {
-      // return {
-      //   type: this.configService.get<any>('DB_TYPE'),
-      //   synchronize: JSON.parse(this.configService.get<string>('SYNCHRONIZE')),
-      //   host: this.configService.get<string>('DB_HOST'),
-      //   database: this.configService.get<string>('DB_NAME'),
-      //   password: this.configService.get<string>('DB_PASS'),
-      //   port: this.configService.get<number>('DB_PORT'),
-      //   autoLoadEntities: true,
-      // };
       return {
         type: this.configService.get<any>('DB_TYPE'),
         synchronize: JSON.parse(this.configService.get<string>('SYNCHRONIZE')),
+        host: this.configService.get<string>('DB_HOST'),
+        username: this.configService.get<string>('DB_USER'),
         database: this.configService.get<string>('DB_NAME'),
+        password: this.configService.get<string>('DB_PASS'),
+        port: this.configService.get<number>('DB_PORT'),
         autoLoadEntities: true,
       };
     } else if (process.env.NODE_ENV === 'test') {
