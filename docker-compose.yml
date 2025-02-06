@@ -1,0 +1,29 @@
+services:
+  postgres:
+    image: postgres:17
+    container_name: los_postgres
+    restart: unless-stopped
+    ports:
+      - '5432:5432' # Map container port 5432 to local port 5432
+    environment:
+      POSTGRES_USER: los_user
+      POSTGRES_PASSWORD: bluepineapple-los
+      POSTGRES_DB: los_db
+
+    volumes:
+      - pgdata:/var/lib/postgresql/data # Persistent data volume
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: los_pgadmin
+    restart: unless-stopped
+    ports:
+      - '5050:80'
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: adminpassword
+    depends_on:
+      - postgres
+
+volumes:
+  pgdata: # This keeps data across container restarts
