@@ -2,33 +2,33 @@ import { Args, ID, Mutation, Query, Resolver } from '@nestjs/graphql';
 
 import { CreateUserInput } from './dtos/create-user.dto'; // GraphQL @InputType
 import { UpdateUserInput } from './dtos/update-user-dto'; // GraphQL @InputType
-import { User } from './dtos/user.dto'; // GraphQL @ObjectType
+import { UserDTO } from './dtos/user.dto'; // GraphQL @ObjectType
 import { UsersService } from './users.service';
 
-@Resolver(() => User)
+@Resolver(() => UserDTO)
 export class UsersResolver {
   constructor(private readonly usersService: UsersService) {}
 
-  @Query(() => [User], { name: 'users' })
-  async findAll(): Promise<User[]> {
+  @Query(() => [UserDTO], { name: 'users' })
+  async findAll(): Promise<UserDTO[]> {
     return this.usersService.findAll();
   }
 
-  @Query(() => User, { name: 'user' })
-  async findOne(@Args('id', { type: () => ID }) id: string): Promise<User> {
+  @Query(() => UserDTO, { name: 'user' })
+  async findOne(@Args('id', { type: () => ID }) id: string): Promise<UserDTO> {
     return this.usersService.findOne(id);
   }
 
-  @Mutation(() => User)
-  async createUser(@Args('input') input: CreateUserInput): Promise<User> {
+  @Mutation(() => UserDTO)
+  async createUser(@Args('input') input: CreateUserInput): Promise<UserDTO> {
     return this.usersService.create(input);
   }
 
-  @Mutation(() => User)
+  @Mutation(() => UserDTO)
   async updateUser(
     @Args('id', { type: () => ID }) id: string,
     @Args('input') input: UpdateUserInput,
-  ): Promise<User> {
+  ): Promise<UserDTO> {
     return this.usersService.update(id, input);
   }
 

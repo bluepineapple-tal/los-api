@@ -13,7 +13,7 @@ registerEnumType(UserStatus, {
 });
 
 @ObjectType()
-export class User {
+export class UserDTO {
   @Field(() => ID)
   id: string;
 
