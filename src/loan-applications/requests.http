@@ -1,14 +1,18 @@
-# List all loan applications
+// [NOTE] Repalce :id with actual ids while sending the requests
+
+### List all loan applications
 GET http://localhost:8000/loan-applications
 
-# Get a specific loan application by ID
+### Get a specific loan application by ID
 GET http://localhost:8000/loan-applications/:id	
 
-# Create a new loan application
+### Create a new loan application
 POST http://localhost:8000/loan-applications
+Content-Type: application/json
 
-#Update a specific loan application
+###Update a specific loan application
 PUT http://localhost:8000/loan-applications/:id
+Content-Type: application/json
 
-# Delete a specific loan application
+### Delete a specific loan application
 DELETE http://localhost:8000/loan-applications/:id

@@ -1,0 +1,29 @@
+// [NOTE] Repalce :id with actual ids while sending the requests
+
+### Get all application documents
+GET http://localhost:8000/loan-applications/documents
+
+### Get a specific application document by ID
+GET http://localhost:8000/loan-applications/documents/:id
+
+### Create a new application document
+POST http://localhost:8000/loan-applications/documents
+Content-Type: application/json
+
+{
+  "loanApplicationId": "loan-app-1",
+  "doc_type": "ID",
+  "file_path": "/uploads/id-proof.pdf"
+}
+
+### Update an application document
+PUT http://localhost:8000/loan-applications/documents/:id
+Content-Type: application/json
+
+{
+  "status": "VERIFIED"
+}
+
+### Delete an application document
+DELETE http://localhost:8000/loan-applications/documents/:id
+

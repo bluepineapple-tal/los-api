@@ -1,0 +1,32 @@
+// [NOTE] Repalce :id with actual ids while sending the requests
+
+### Get all loan application history records
+GET http://localhost:8000/loan-applications/history
+
+### Get a specific loan application history
+GET http://localhost:8000/loan-applications/history/:id
+
+### Create a new loan application history entry
+POST http://localhost:8000/loan-applications/history
+Content-Type: application/json
+
+{
+  "loanApplicationId": "loan-app-1",
+  "old_status": "PENDING",
+  "new_status": "REJECTED",
+  "change_note": "Application rejected due to low credit score",
+  "changed_by": "admin-1"
+}
+
+### Update an application history entry
+PUT http://localhost:8000/loan-applications/history/:id
+Content-Type: application/json
+
+{
+  "old_status": "PENDING",
+  "new_status": "REJECTED",
+}
+
+### Delete an application history entry
+DELETE http://localhost:8000/loan-applications/history/:id
+
