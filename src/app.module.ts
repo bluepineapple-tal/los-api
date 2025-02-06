@@ -11,6 +11,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_PIPE } from '@nestjs/core';
 import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { RequestLoggerMiddleware } from 'logger/middlewares/request-logger.middleware';
 
 import { AppController } from './app.controller';
 import { AppResolver } from './app.resolver';
@@ -18,7 +19,9 @@ import { AppService } from './app.service';
 import { TypeOrmConfigService } from './config/typeorm.config';
 import { HealthCheckController } from './health-check/health-check.controller';
 import { HealthCheckService } from './health-check/health-check.service';
-import { RequestLoggerMiddleware } from 'logger/middlewares/request-logger.middleware';
+import { LoanApplicationsModule } from './loan-applications/loan-applications.module';
+import { LoanOffersModule } from './loan-offers/loan-offers.module';
+import { ProductsModule } from './products/products.module';
 import { UsersModule } from './users/users.module';
 
 @Module({
@@ -34,6 +37,9 @@ import { UsersModule } from './users/users.module';
       playground: true, // Optional: Enable the Apollo sandbox
     }),
     UsersModule,
+    ProductsModule,
+    LoanOffersModule,
+    LoanApplicationsModule,
   ],
   controllers: [AppController, HealthCheckController],
   providers: [
