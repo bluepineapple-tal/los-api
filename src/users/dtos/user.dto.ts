@@ -1,5 +1,8 @@
-import { ObjectType, Field, ID, registerEnumType } from '@nestjs/graphql';
+import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql';
+
 import { UserRole, UserStatus } from '../../entities/user.entity';
+import { ConsumerDTO } from './consumer.dto';
+import { VendorDTO } from './vendor.dto';
 
 registerEnumType(UserRole, {
   name: 'UserRole',
@@ -30,5 +33,11 @@ export class User {
   @Field()
   updated_at: Date;
 
-  // If you want to expose vendor or consumer subfields, you can define them or create separate types.
+  // -- Expose the Consumer profile if role == CONSUMER
+  @Field(() => ConsumerDTO, { nullable: true })
+  consumer?: ConsumerDTO;
+
+  // -- Expose the Vendor profile if role == VENDOR
+  @Field(() => VendorDTO, { nullable: true })
+  vendor?: VendorDTO;
 }
