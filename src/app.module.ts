@@ -16,12 +16,10 @@ import { AppController } from './app.controller';
 import { AppResolver } from './app.resolver';
 import { AppService } from './app.service';
 import { TypeOrmConfigService } from './config/typeorm.config';
-import { CreditModule } from './credit/credit.module';
 import { HealthCheckController } from './health-check/health-check.controller';
 import { HealthCheckService } from './health-check/health-check.service';
-import { LoanModule } from './loan/loan.module';
-import { UnderwritingModule } from './underwriting/underwriting.module';
 import { RequestLoggerMiddleware } from 'logger/middlewares/request-logger.middleware';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -35,9 +33,7 @@ import { RequestLoggerMiddleware } from 'logger/middlewares/request-logger.middl
       autoSchemaFile: true, // Automatically generate schema
       playground: true, // Optional: Enable the Apollo sandbox
     }),
-    LoanModule,
-    CreditModule,
-    UnderwritingModule,
+    UsersModule,
   ],
   controllers: [AppController, HealthCheckController],
   providers: [
