@@ -1,7 +1,6 @@
+import { NestFactory } from '@nestjs/core';
 import { instance } from 'logger/winston.logger';
 import { WinstonModule } from 'nest-winston';
-
-import { NestFactory } from '@nestjs/core';
 
 import { AppModule } from './app.module';
 

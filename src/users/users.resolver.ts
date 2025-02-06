@@ -1,8 +1,9 @@
-import { Resolver, Query, Mutation, Args, ID } from '@nestjs/graphql';
-import { UsersService } from './users.service';
-import { User } from './dtos/user.dto'; // GraphQL @ObjectType
+import { Args, ID, Mutation, Query, Resolver } from '@nestjs/graphql';
+
 import { CreateUserInput } from './dtos/create-user.dto'; // GraphQL @InputType
 import { UpdateUserInput } from './dtos/update-user-dto'; // GraphQL @InputType
+import { User } from './dtos/user.dto'; // GraphQL @ObjectType
+import { UsersService } from './users.service';
 
 @Resolver(() => User)
 export class UsersResolver {

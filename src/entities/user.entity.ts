@@ -9,8 +9,8 @@ import {
 } from 'typeorm';
 
 import { Consumer } from './consumer.entity';
-import { LoanApplicationHistory } from './loan-application-history.entity';
 import { LoanApplication } from './loan-application.entity';
+import { LoanApplicationHistory } from './loan-application-history.entity';
 import { ManualReview } from './manual-review.entity';
 import { Vendor } from './vendor.entity';
 

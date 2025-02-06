@@ -1,18 +1,17 @@
+import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { Consumer } from 'src/entities/consumer.entity';
+import { LoanApplication } from 'src/entities/loan-application.entity';
+import { LoanApplicationHistory } from 'src/entities/loan-application-history.entity';
+import { LoanOffer } from 'src/entities/loan-offer.entity';
+import { ManualReview } from 'src/entities/manual-review.entity';
+import { Product } from 'src/entities/product.entity';
 import { User } from 'src/entities/user.entity';
 import { Vendor } from 'src/entities/vendor.entity';
 
-import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-
 import { UsersController } from './users.controller';
-import { UsersService } from './users.service';
 import { UsersResolver } from './users.resolver';
-import { LoanApplication } from 'src/entities/loan-application.entity';
-import { Product } from 'src/entities/product.entity';
-import { LoanOffer } from 'src/entities/loan-offer.entity';
-import { ManualReview } from 'src/entities/manual-review.entity';
-import { LoanApplicationHistory } from 'src/entities/loan-application-history.entity';
+import { UsersService } from './users.service';
 
 @Module({
   imports: [

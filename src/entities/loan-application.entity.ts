@@ -1,14 +1,15 @@
 import {
-  Entity,
-  PrimaryGeneratedColumn,
   Column,
-  ManyToOne,
   CreateDateColumn,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+
 import { Consumer } from './consumer.entity';
-import { Product } from './product.entity';
 import { LoanOffer } from './loan-offer.entity';
+import { Product } from './product.entity';
 import { User } from './user.entity';
 
 export enum ApplicationStatus {

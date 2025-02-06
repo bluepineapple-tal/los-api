@@ -1,10 +1,10 @@
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 import { Consumer } from 'src/entities/consumer.entity';
 import { User, UserRole } from 'src/entities/user.entity';
 import { Vendor } from 'src/entities/vendor.entity';
 import { Repository } from 'typeorm';
 
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UpdateUserDto } from './dtos/update-user-dto';
 

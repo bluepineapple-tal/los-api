@@ -1,13 +1,14 @@
 import {
-  Entity,
-  PrimaryGeneratedColumn,
   Column,
-  ManyToOne,
   CreateDateColumn,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { UnderwritingRule } from './underwriting-rule.entity';
+
 import { LoanApplication } from './loan-application.entity';
+import { UnderwritingRule } from './underwriting-rule.entity';
 
 export enum Decision {
   APPROVE = 'approve',

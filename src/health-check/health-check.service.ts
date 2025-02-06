@@ -1,6 +1,5 @@
-import { DataSource } from 'typeorm';
-
 import { Injectable, Logger } from '@nestjs/common';
+import { DataSource } from 'typeorm';
 
 @Injectable()
 export class HealthCheckService {
