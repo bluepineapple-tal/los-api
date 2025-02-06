@@ -1,36 +1,63 @@
 import {
-  Column,
   Entity,
-  JoinColumn,
-  ManyToOne,
-  OneToOne,
   PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  CreateDateColumn,
+  UpdateDateColumn,
 } from 'typeorm';
-
-import { CreditAssessment } from './credit-assessment.entity';
+import { Consumer } from './consumer.entity';
+import { Product } from './product.entity';
+import { LoanOffer } from './loan-offer.entity';
 import { User } from './user.entity';
 
-@Entity('loan_applications')
+export enum ApplicationStatus {
+  DRAFT = 'draft',
+  SUBMITTED = 'submitted',
+  UNDER_REVIEW = 'under_review',
+  APPROVED = 'approved',
+  REJECTED = 'rejected',
+  ESCALATED = 'escalated',
+}
+
+@Entity()
 export class LoanApplication {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-  @Column()
-  loanAmount: number;
+  @ManyToOne(() => Consumer, { onDelete: 'CASCADE' })
+  consumer: Consumer;
 
-  @Column({ type: 'date' })
-  applicationDate: Date;
+  @ManyToOne(() => Product, { onDelete: 'CASCADE', nullable: false })
+  product: Product;
 
-  @Column({ default: 'pending' })
-  status: string;
+  @ManyToOne(() => LoanOffer, { onDelete: 'CASCADE', nullable: false })
+  loan_offer: LoanOffer;
 
-  @ManyToOne(() => User, (user) => user.loanApplications)
-  user: User;
+  @Column({ type: 'timestamp' })
+  application_date: Date;
 
-  @OneToOne(
-    () => CreditAssessment,
-    (creditAssessment) => creditAssessment.loanApplication,
-  )
-  @JoinColumn()
-  creditAssessment: CreditAssessment;
+  @Column({
+    type: 'enum',
+    enum: ApplicationStatus,
+    default: ApplicationStatus.DRAFT,
+  })
+  status: ApplicationStatus;
+
+  @Column('decimal', { precision: 12, scale: 2, nullable: true })
+  requested_amount?: number;
+
+  @ManyToOne(() => User, (user) => user.underwrittenApplications, {
+    nullable: true,
+  })
+  underwriter?: User; // assigned underwriter
+
+  @Column({ default: false })
+  manual_review_needed: boolean;
+
+  @CreateDateColumn()
+  created_at: Date;
+
+  @UpdateDateColumn()
+  updated_at: Date;
 }

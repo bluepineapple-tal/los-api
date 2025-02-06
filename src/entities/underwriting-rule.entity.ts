@@ -1,16 +1,42 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  OneToMany,
+} from 'typeorm';
+import { UnderwritingResult } from './underwriting-result.entity';
 
-@Entity('underwriting_rules')
+@Entity()
 export class UnderwritingRule {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column()
-  ruleName: string;
+  rule_name: string;
+
+  @Column('text')
+  rule_desc: string;
+
+  @Column('text')
+  conditions: string; // store as JSON or DSL
 
   @Column()
-  description: string;
+  action: string; // e.g., "approve", "reject", "escalate"
 
   @Column()
-  isStrict: boolean;
+  priority: number;
+
+  @Column({ default: true })
+  active: boolean;
+
+  @CreateDateColumn()
+  created_at: Date;
+
+  @UpdateDateColumn()
+  updated_at: Date;
+
+  @OneToMany(() => UnderwritingResult, (res) => res.rule)
+  results: UnderwritingResult[];
 }
