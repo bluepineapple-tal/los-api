@@ -7,8 +7,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { LoanApplication } from './loan-application.entity';
-import { ApplicationStatus } from './loan-application.entity';
+import { ApplicationStatus, LoanApplication } from './loan-application.entity';
 import { User } from './user.entity';
 
 @Entity()
