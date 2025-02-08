@@ -95,7 +95,10 @@
       "**/*.(t|j)s"
     ],
     "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "moduleNameMapper": {
+      "^src/(.*)$": "<rootDir>/$1"
+    }
   },
   "overrides": {
     "conventional-changelog-conventionalcommits": ">= 8.0.0"
