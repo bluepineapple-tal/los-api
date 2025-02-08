@@ -1,4 +1,4 @@
-import { LoanApplicationHistory } from 'src/entities/loan-application-history.entity';
+import { LoanApplicationHistory } from 'src/loan-applications/loan-application-history/loan-application-history.entity';
 
 import {
   Body,

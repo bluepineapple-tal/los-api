@@ -9,9 +9,9 @@ import {
   Put,
 } from '@nestjs/common';
 
-import { LoanApplication } from '../entities/loan-application.entity';
 import { CreateLoanApplicationDto } from './dtos/create-loan-application.dto';
 import { UpdateLoanApplicationDto } from './dtos/update-loan-application.dto';
+import { LoanApplication } from './loan-application.entity';
 import { LoanApplicationsService } from './loan-applications.service';
 
 @Controller('loan-applications')

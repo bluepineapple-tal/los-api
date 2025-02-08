@@ -1,17 +1,17 @@
 // src/loan-applications/loan-applications.service.ts
 
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-import { Consumer } from '../entities/consumer.entity';
-import { LoanApplication } from '../entities/loan-application.entity';
-import { ApplicationStatus } from '../entities/loan-application.entity';
-import { LoanOffer } from '../entities/loan-offer.entity';
-import { Product } from '../entities/product.entity';
-import { User } from '../entities/user.entity';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+
+import { LoanOffer } from '../loan-offers/loan-offer.entity';
+import { Product } from '../products/product.entity';
+import { Consumer } from '../users/consumer.entity';
+import { User } from '../users/user.entity';
 import { CreateLoanApplicationDto } from './dtos/create-loan-application.dto';
 import { UpdateLoanApplicationDto } from './dtos/update-loan-application.dto';
+import { ApplicationStatus, LoanApplication } from './loan-application.entity';
 
 @Injectable()
 export class LoanApplicationsService {

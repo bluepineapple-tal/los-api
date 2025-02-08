@@ -2,10 +2,7 @@ import { IsEnum, IsOptional } from 'class-validator';
 
 import { Field, InputType } from '@nestjs/graphql';
 
-import {
-  DocumentStatus,
-  DocumentType,
-} from '../../../entities/application-document.entity';
+import { DocumentStatus, DocumentType } from '../application-document.entity';
 
 @InputType()
 export class UpdateApplicationDocumentInput {

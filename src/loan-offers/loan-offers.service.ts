@@ -1,12 +1,13 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-import { LoanOffer } from '../entities/loan-offer.entity';
-import { Product } from '../entities/product.entity';
-import { User } from '../entities/user.entity';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+
+import { Product } from '../products/product.entity';
+import { User } from '../users/user.entity';
 import { CreateLoanOfferDto } from './dtos/create-loan-offer.dto';
 import { UpdateLoanOfferDto } from './dtos/update-loan-offer.dto';
+import { LoanOffer } from './loan-offer.entity';
 
 @Injectable()
 export class LoanOffersService {

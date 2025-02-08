@@ -6,7 +6,7 @@ import {
   registerEnumType,
 } from '@nestjs/graphql';
 
-import { ProductStatus } from '../../entities/product.entity';
+import { ProductStatus } from '../product.entity';
 
 registerEnumType(ProductStatus, {
   name: 'ProductStatus',

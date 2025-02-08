@@ -2,7 +2,7 @@ import { IsEnum, IsNotEmpty, IsUUID } from 'class-validator';
 
 import { Field, InputType } from '@nestjs/graphql';
 
-import { DocumentType } from '../../../entities/application-document.entity';
+import { DocumentType } from '../application-document.entity';
 
 @InputType()
 export class CreateApplicationDocumentInput {

@@ -1,3 +1,4 @@
+import { User } from 'src/users/user.entity';
 import {
   Column,
   CreateDateColumn,
@@ -8,8 +9,6 @@ import {
   Unique,
   UpdateDateColumn,
 } from 'typeorm';
-
-import { User } from './user.entity';
 
 @Entity()
 @Unique(['pan'])

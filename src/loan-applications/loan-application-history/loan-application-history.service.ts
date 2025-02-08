@@ -1,6 +1,6 @@
-import { LoanApplicationHistory } from 'src/entities/loan-application-history.entity';
-import { LoanApplication } from 'src/entities/loan-application.entity';
-import { User } from 'src/entities/user.entity';
+import { LoanApplicationHistory } from 'src/loan-applications/loan-application-history/loan-application-history.entity';
+import { LoanApplication } from 'src/loan-applications/loan-application.entity';
+import { User } from 'src/users/user.entity';
 import { Repository } from 'typeorm';
 
 import { Injectable, NotFoundException } from '@nestjs/common';

@@ -1,12 +1,13 @@
+import { Consumer } from 'src/users/consumer.entity';
+import { Vendor } from 'src/users/vendor.entity';
+import { Repository } from 'typeorm';
+
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Consumer } from 'src/entities/consumer.entity';
-import { User, UserRole } from 'src/entities/user.entity';
-import { Vendor } from 'src/entities/vendor.entity';
-import { Repository } from 'typeorm';
 
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UpdateUserDto } from './dtos/update-user-dto';
+import { User, UserRole } from './user.entity';
 
 @Injectable()
 export class UsersService {

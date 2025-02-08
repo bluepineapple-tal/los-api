@@ -2,7 +2,7 @@ import { UserDTO } from 'src/users/dtos/user.dto';
 
 import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql';
 
-import { ApplicationStatus } from '../../../entities/loan-application.entity';
+import { ApplicationStatus } from '../../loan-application.entity';
 
 registerEnumType(ApplicationStatus, { name: 'ApplicationStatus' });
 

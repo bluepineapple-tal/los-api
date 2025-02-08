@@ -1,4 +1,4 @@
-import { ApplicationDocument } from 'src/entities/application-document.entity';
+import { ApplicationDocument } from 'src/loan-applications/application-documents/application-document.entity';
 
 import {
   Body,

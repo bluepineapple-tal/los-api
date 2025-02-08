@@ -1,6 +1,6 @@
 import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql';
 
-import { UserRole, UserStatus } from '../../entities/user.entity';
+import { UserRole, UserStatus } from '../user.entity';
 import { ConsumerDTO } from './consumer.dto';
 import { VendorDTO } from './vendor.dto';
 

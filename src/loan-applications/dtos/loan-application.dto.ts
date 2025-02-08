@@ -1,3 +1,7 @@
+import { LoanOfferDTO } from 'src/loan-offers/dtos/loan-offer.dto';
+import { ProductDTO } from 'src/products/dtos/product.dto';
+import { ConsumerDTO } from 'src/users/dtos/consumer.dto';
+
 import {
   Field,
   Float,
@@ -5,11 +9,8 @@ import {
   ObjectType,
   registerEnumType,
 } from '@nestjs/graphql';
-import { LoanOfferDTO } from 'src/loan-offers/dtos/loan-offer.dto';
-import { ProductDTO } from 'src/products/dtos/product.dto';
-import { ConsumerDTO } from 'src/users/dtos/consumer.dto';
 
-import { ApplicationStatus } from '../../entities/loan-application.entity';
+import { ApplicationStatus } from '../loan-application.entity';
 
 registerEnumType(ApplicationStatus, {
   name: 'ApplicationStatus',

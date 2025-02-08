@@ -1,9 +1,6 @@
 import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql';
 
-import {
-  DocumentStatus,
-  DocumentType,
-} from '../../../entities/application-document.entity';
+import { DocumentStatus, DocumentType } from '../application-document.entity';
 
 registerEnumType(DocumentType, { name: 'DocumentType' });
 registerEnumType(DocumentStatus, { name: 'DocumentStatus' });

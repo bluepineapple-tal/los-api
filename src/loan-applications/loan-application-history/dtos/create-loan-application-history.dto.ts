@@ -2,7 +2,7 @@ import { IsEnum, IsOptional, IsUUID } from 'class-validator';
 
 import { Field, InputType } from '@nestjs/graphql';
 
-import { ApplicationStatus } from '../../../entities/loan-application.entity';
+import { ApplicationStatus } from '../../loan-application.entity';
 
 @InputType()
 export class CreateLoanApplicationHistoryInput {

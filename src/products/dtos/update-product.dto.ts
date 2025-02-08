@@ -1,7 +1,8 @@
-import { Field, Float, InputType } from '@nestjs/graphql';
 import { IsEnum, IsOptional, IsUUID } from 'class-validator';
 
-import { ProductStatus } from '../../entities/product.entity';
+import { Field, Float, InputType } from '@nestjs/graphql';
+
+import { ProductStatus } from '../product.entity';
 
 @InputType()
 export class UpdateProductInput {
