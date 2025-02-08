@@ -8,8 +8,8 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { LoanOffer } from './loan-offer.entity';
-import { Vendor } from './vendor.entity';
+import { LoanOffer } from '../loan-offers/loan-offer.entity';
+import { Vendor } from '../users/vendor.entity';
 
 export enum ProductStatus {
   ACTIVE = 'active',

@@ -7,9 +7,9 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { Consumer } from './consumer.entity';
-import { LoanOffer } from './loan-offer.entity';
-import { Product } from './product.entity';
+import { LoanOffer } from '../loan-offers/loan-offer.entity';
+import { Product } from '../products/product.entity';
+import { Consumer } from '../users/consumer.entity';
 import { User } from './user.entity';
 
 export enum ApplicationStatus {

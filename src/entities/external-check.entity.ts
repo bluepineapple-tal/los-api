@@ -7,7 +7,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { LoanApplication } from './loan-application.entity';
+import { LoanApplication } from '../loan-applications/loan-application.entity';
 
 export enum CheckType {
   CREDIT = 'CREDIT',

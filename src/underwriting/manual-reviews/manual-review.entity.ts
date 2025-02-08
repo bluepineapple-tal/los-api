@@ -7,31 +7,33 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { ApplicationStatus, LoanApplication } from './loan-application.entity';
+import { LoanApplication } from '../../loan-applications/loan-application.entity';
 import { User } from './user.entity';
 
+export enum ReviewStatus {
+  PENDING = 'pending',
+  IN_PROGRESS = 'in_progress',
+  ESCALATED = 'escalated',
+  APPROVED = 'approved',
+  REJECTED = 'rejected',
+}
+
 @Entity()
-export class LoanApplicationHistory {
+export class ManualReview {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @ManyToOne(() => LoanApplication, { onDelete: 'CASCADE' })
   loan_application: LoanApplication;
 
-  @Column({ type: 'enum', enum: ApplicationStatus })
-  old_status: ApplicationStatus;
-
-  @Column({ type: 'enum', enum: ApplicationStatus })
-  new_status: ApplicationStatus;
-
   @ManyToOne(() => User, { onDelete: 'SET NULL' })
-  changed_by: User;
+  underwriter: User;
 
-  @CreateDateColumn()
-  changed_at: Date;
+  @Column({ type: 'enum', enum: ReviewStatus, default: ReviewStatus.PENDING })
+  review_status: ReviewStatus;
 
   @Column('text', { nullable: true })
-  change_note?: string;
+  notes?: string;
 
   @CreateDateColumn()
   created_at: Date;

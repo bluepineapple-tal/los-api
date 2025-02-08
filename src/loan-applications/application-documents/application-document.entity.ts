@@ -9,7 +9,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { LoanApplication } from './loan-application.entity';
+import { LoanApplication } from '../loan-application.entity';
 
 export enum DocumentType {
   KYC = 'KYC',
