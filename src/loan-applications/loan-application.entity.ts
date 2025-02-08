@@ -1,3 +1,4 @@
+import { User } from 'src/users/user.entity';
 import {
   Column,
   CreateDateColumn,
@@ -10,7 +11,6 @@ import {
 import { LoanOffer } from '../loan-offers/loan-offer.entity';
 import { Product } from '../products/product.entity';
 import { Consumer } from '../users/consumer.entity';
-import { User } from './user.entity';
 
 export enum ApplicationStatus {
   DRAFT = 'draft',
