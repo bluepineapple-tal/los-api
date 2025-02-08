@@ -7,7 +7,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { UnderwritingResult } from './underwriting-result.entity';
+import { UnderwritingResult } from '../results/underwriting-result.entity';
 
 @Entity()
 export class UnderwritingRule {

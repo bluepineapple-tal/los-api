@@ -1,3 +1,4 @@
+import { LoanApplication } from 'src/loan-applications/loan-application.entity';
 import {
   Column,
   CreateDateColumn,
@@ -7,8 +8,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { LoanApplication } from './loan-application.entity';
-import { UnderwritingRule } from './underwriting-rule.entity';
+import { UnderwritingRule } from '../rules/underwriting-rule.entity';
 
 export enum Decision {
   APPROVE = 'approve',

@@ -1,3 +1,6 @@
+import { LoanApplicationHistory } from 'src/loan-applications/loan-application-history/loan-application-history.entity';
+import { LoanApplication } from 'src/loan-applications/loan-application.entity';
+import { ManualReview } from 'src/underwriting/manual-reviews/manual-review.entity';
 import {
   Column,
   CreateDateColumn,
@@ -9,9 +12,6 @@ import {
 } from 'typeorm';
 
 import { Consumer } from './consumer.entity';
-import { LoanApplication } from './loan-application.entity';
-import { LoanApplicationHistory } from './loan-application-history.entity';
-import { ManualReview } from './manual-review.entity';
 import { Vendor } from './vendor.entity';
 
 export enum UserRole {

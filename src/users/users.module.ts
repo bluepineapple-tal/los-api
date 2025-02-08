@@ -1,4 +1,3 @@
-import { User } from 'src/entities/user.entity';
 import { LoanApplicationHistory } from 'src/loan-applications/loan-application-history/loan-application-history.entity';
 import { LoanApplication } from 'src/loan-applications/loan-application.entity';
 import { LoanOffer } from 'src/loan-offers/loan-offer.entity';
@@ -10,6 +9,7 @@ import { Vendor } from 'src/users/vendor.entity';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { User } from './user.entity';
 import { UsersController } from './users.controller';
 import { UsersResolver } from './users.resolver';
 import { UsersService } from './users.service';
