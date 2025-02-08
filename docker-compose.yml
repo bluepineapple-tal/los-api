@@ -13,17 +13,17 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data # Persistent data volume
 
-  pgadmin:
-    image: dpage/pgadmin4
-    container_name: los_pgadmin
+  cloudbeaver:
+    image: dbeaver/cloudbeaver
+    container_name: los_cloudbeaver
     restart: unless-stopped
     ports:
-      - '5050:80'
-    environment:
-      PGADMIN_DEFAULT_EMAIL: admin@example.com
-      PGADMIN_DEFAULT_PASSWORD: adminpassword
+      - '8200:8978'
     depends_on:
       - postgres
-
+    volumes:
+      - cloudbeaver-data:/var/lib/cloudbeaver
+# pass - bluepineapple-LOS9
 volumes:
   pgdata: # This keeps data across container restarts
+  cloudbeaver-data:
