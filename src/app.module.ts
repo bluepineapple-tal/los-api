@@ -23,6 +23,7 @@ import { LoanApplicationsModule } from './loan-applications/loan-applications.mo
 import { LoanOffersModule } from './loan-offers/loan-offers.module';
 import { ProductsModule } from './products/products.module';
 import { UsersModule } from './users/users.module';
+import { UnderwritingModule } from './underwriting/underwriting.module';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { UsersModule } from './users/users.module';
     ProductsModule,
     LoanOffersModule,
     LoanApplicationsModule,
+    UnderwritingModule,
   ],
   controllers: [AppController, HealthCheckController],
   providers: [
