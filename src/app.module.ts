@@ -1,5 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const cookieSession = require('cookie-session');
+import { RequestLoggerMiddleware } from 'logger/middlewares/request-logger.middleware';
+
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import {
   Logger,
@@ -11,19 +13,19 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_PIPE } from '@nestjs/core';
 import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { RequestLoggerMiddleware } from 'logger/middlewares/request-logger.middleware';
 
 import { AppController } from './app.controller';
 import { AppResolver } from './app.resolver';
 import { AppService } from './app.service';
 import { TypeOrmConfigService } from './config/typeorm.config';
+import { ExternalChecksModule } from './external-checks/external-checks.module';
 import { HealthCheckController } from './health-check/health-check.controller';
 import { HealthCheckService } from './health-check/health-check.service';
 import { LoanApplicationsModule } from './loan-applications/loan-applications.module';
 import { LoanOffersModule } from './loan-offers/loan-offers.module';
 import { ProductsModule } from './products/products.module';
-import { UsersModule } from './users/users.module';
 import { UnderwritingModule } from './underwriting/underwriting.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -42,6 +44,7 @@ import { UnderwritingModule } from './underwriting/underwriting.module';
     LoanOffersModule,
     LoanApplicationsModule,
     UnderwritingModule,
+    ExternalChecksModule,
   ],
   controllers: [AppController, HealthCheckController],
   providers: [

@@ -1,0 +1,26 @@
+### 🔹 List all External Checks
+GET http://localhost:8000/external-checks
+
+### 🔹 Get a specific External Check by ID
+GET http://localhost:8000/external-checks/:id
+
+### 🔹 Create a new External Check
+POST http://localhost:8000/external-checks
+Content-Type: application/json
+
+{
+  "loanApplicationId": "loan-app-uuid",
+  "check_type": "CREDIT"
+}
+
+### 🔹 Update an External Check
+PUT http://localhost:8000/external-checks/:id
+Content-Type: application/json
+
+{
+  "check_status": "SUCCESS",
+  "response_data": "Credit check passed"
+}
+
+### 🔹 Delete an External Check
+DELETE http://localhost:8000/external-checks/:id
