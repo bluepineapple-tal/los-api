@@ -1,0 +1,26 @@
+### 🔹 List all blacklist entries
+GET http://localhost:8000/blacklist
+
+### 🔹 Get a specific blacklist entry by ID
+GET http://localhost:8000/blacklist/:id
+
+### 🔹 Create a new blacklist entry
+POST http://localhost:8000/blacklist
+Content-Type: application/json
+
+{
+  "pan": "ABCDE1234X",
+  "userId": "user-uuid-optional"
+}
+
+### 🔹 Update a blacklist entry
+PUT http://localhost:8000/blacklist/:id
+Content-Type: application/json
+
+{
+  "pan": "PQRSX9876Y"
+}
+
+### 🔹 Delete a blacklist entry
+DELETE http://localhost:8000/blacklist/:id
+
