@@ -137,4 +137,3 @@ npm run typeorm migration:run
 | `npm run typeorm migration:run` |  Apply all pending migrations    |
 | `npm run typeorm migration:revert`    | Revert the last migration    |
 | `npm run typeorm migration:show`    | Show miogration history    |
-
