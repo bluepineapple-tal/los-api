@@ -11,6 +11,7 @@ import {
 } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_PIPE } from '@nestjs/core';
+import { CqrsModule } from '@nestjs/cqrs';
 import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
@@ -39,6 +40,7 @@ import { UsersModule } from './users/users.module';
       autoSchemaFile: true, // Automatically generate schema
       playground: true, // Optional: Enable the Apollo sandbox
     }),
+    CqrsModule.forRoot(),
     UsersModule,
     ProductsModule,
     LoanOffersModule,
