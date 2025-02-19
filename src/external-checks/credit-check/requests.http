@@ -1,0 +1,11 @@
+### Get credit check
+POST http://localhost:8000/credit-check/score
+Content-Type: application/json
+
+{
+  "income": 75000,
+  "creditHistory": "GOOD", 
+  "natureOfBusiness": "SALARIED",
+  "residenceType": "OWN",
+  "age": 31
+}
