@@ -39,36 +39,10 @@ jobs:
             echo "tag=staging" >> $GITHUB_OUTPUT
           fi
 
-      - name: Build and Push LOS Lender Portal
+      - name: Build and Push LOS API
         uses: docker/build-push-action@v6
         with:
           context: .
           push: true
           tags: |
-            ghcr.io/bluepineapple-tal/los-lender-portal:${{ steps.getTag.outputs.tag }}
-
-      # - name: Portainer - Login
-      #   id: portainer_login
-      #   run: |
-      #     curl -s -X POST \
-      #       -H "Content-Type: application/json" \
-      #       -d '{"Username":"admin","Password":"'${{ secrets.PORTAINER_PASSWORD }}'"}' \
-      #       https://portainer.middle-earth.in/api/auth \
-      #       > response.json
-
-      #     TOKEN=$(cat response.json | jq -r .jwt)
-      #     echo "token=$TOKEN" >> $GITHUB_OUTPUT
-
-      # - name: Portainer - Redeploy Staging
-      #   if: github.ref_name == 'develop'
-      #   run: |
-      #     curl -i -X POST \
-      #       -H "Authorization: Bearer ${{ steps.portainer_login.outputs.token }}" \
-      #       "https://portainer.middle-earth.in/api/stacks/2/redeploy?endpointId=1"
-
-      # - name: Portainer - Redeploy Production
-      #   if: github.ref_name == 'main'
-      #   run: |
-      #     curl -i -X POST \
-      #       -H "Authorization: Bearer ${{ steps.portainer_login.outputs.token }}" \
-      #       "https://portainer.middle-earth.in/api/stacks/3/redeploy?endpointId=1"
+            ghcr.io/bluepineapple-tal/los-api:${{ steps.getTag.outputs.tag }}
