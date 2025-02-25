@@ -30,6 +30,7 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
         ),
       };
     } else if (process.env.NODE_ENV === 'production') {
+      const sslEnabled = JSON.parse(this.configService.get<string>('SSL'));
       return {
         type: this.configService.get<any>('DB_TYPE'),
         synchronize: false,
@@ -38,9 +39,7 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
         migrationsRun: JSON.parse(
           this.configService.get<string>('MIGRATIONS_RUN'),
         ),
-        ssl: {
-          rejectUnauthorized: JSON.parse(this.configService.get<string>('SSL')),
-        },
+        ssl: sslEnabled ? { rejectUnauthorized: false } : false,
       };
     }
   }
