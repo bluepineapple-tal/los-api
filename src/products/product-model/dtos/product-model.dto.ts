@@ -1,3 +1,6 @@
+import { IsNumber } from 'class-validator';
+import { ProductStatus } from 'src/products/products.enum';
+
 import {
   Field,
   Float,
@@ -5,17 +8,19 @@ import {
   ObjectType,
   registerEnumType,
 } from '@nestjs/graphql';
-
-import { ProductStatus } from '../product.entity';
+import { ProductMakeDTO } from 'src/products/product-make/dtos/product-make.dto';
 
 registerEnumType(ProductStatus, {
   name: 'ProductStatus',
 });
 
 @ObjectType()
-export class ProductDTO {
+export class ProductModelDTO {
   @Field(() => ID)
   id: string;
+
+  @Field(() => ProductMakeDTO, { nullable: true })
+  productMake?: ProductMakeDTO;
 
   @Field()
   name: string;
@@ -24,6 +29,7 @@ export class ProductDTO {
   description: string;
 
   @Field(() => Float)
+  @IsNumber()
   price: number;
 
   @Field(() => ProductStatus)
@@ -34,7 +40,4 @@ export class ProductDTO {
 
   @Field()
   updated_at: Date;
-
-  // If we want to expose vendor details, we can do it here or create a separate DTO
-  // e.g. vendor?: VendorDTO
 }

@@ -1,5 +1,4 @@
 import { LoanOfferDTO } from 'src/loan-offers/dtos/loan-offer.dto';
-import { ProductDTO } from 'src/products/dtos/product.dto';
 import { ConsumerDTO } from 'src/users/dtos/consumer.dto';
 
 import {
@@ -11,6 +10,7 @@ import {
 } from '@nestjs/graphql';
 
 import { ApplicationStatus } from '../loan-application.entity';
+import { ProductModelDTO } from 'src/products/product-model/dtos/product-model.dto';
 
 registerEnumType(ApplicationStatus, {
   name: 'ApplicationStatus',
@@ -42,8 +42,8 @@ export class LoanApplicationDTO {
   @Field(() => LoanOfferDTO, { nullable: true })
   loan_offer?: LoanOfferDTO;
 
-  @Field(() => ProductDTO, { nullable: true })
-  product?: ProductDTO;
+  @Field(() => ProductModelDTO, { nullable: true })
+  productModel?: ProductModelDTO;
 
   @Field(() => ConsumerDTO, { nullable: true })
   consumer?: ConsumerDTO;

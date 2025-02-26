@@ -1,6 +1,4 @@
-// src/blacklist/blacklist.service.ts
-
-import { Blacklist } from 'src/entities/blacklist.entity';
+import { Blacklist } from 'src/users/blacklist/blacklist.entity';
 import { Repository } from 'typeorm';
 
 import { Injectable, NotFoundException } from '@nestjs/common';

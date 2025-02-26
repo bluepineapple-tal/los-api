@@ -1,29 +1,22 @@
+import { LoanOffer } from 'src/loan-offers/loan-offer.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 
-import { LoanOffer } from '../loan-offers/loan-offer.entity';
-import { Vendor } from '../users/vendor.entity';
-
-export enum ProductStatus {
-  ACTIVE = 'active',
-  INACTIVE = 'inactive',
-  DISCONTINUED = 'discontinued',
-}
+import { ProductMake } from '../product-make/product-make.entity';
+import { ProductStatus } from '../products.enum';
 
 @Entity()
-export class Product {
+export class ProductModel {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-
-  @ManyToOne(() => Vendor, { onDelete: 'CASCADE' })
-  vendor: Vendor;
 
   @Column()
   name: string;
@@ -47,7 +40,11 @@ export class Product {
   @UpdateDateColumn()
   updated_at: Date;
 
-  // Relationship to Loan Offers
-  @OneToMany(() => LoanOffer, (offer) => offer.product)
+  // Relationships
+  @OneToMany(() => LoanOffer, (offer) => offer.productModel)
   loanOffers: LoanOffer[];
+
+  @ManyToOne(() => ProductMake, (make) => make.models, { eager: true })
+  @JoinColumn({ name: 'make_id' })
+  make: ProductMake;
 }

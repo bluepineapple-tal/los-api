@@ -1,3 +1,4 @@
+import { ProductModel } from 'src/products/product-model/product-model.entity';
 import { User } from 'src/users/user.entity';
 import {
   Column,
@@ -9,7 +10,6 @@ import {
 } from 'typeorm';
 
 import { LoanOffer } from '../loan-offers/loan-offer.entity';
-import { Product } from '../products/product.entity';
 import { Consumer } from '../users/consumer.entity';
 
 export enum ApplicationStatus {
@@ -29,8 +29,8 @@ export class LoanApplication {
   @ManyToOne(() => Consumer, { onDelete: 'CASCADE' })
   consumer: Consumer;
 
-  @ManyToOne(() => Product, { onDelete: 'CASCADE', nullable: false })
-  product: Product;
+  @ManyToOne(() => ProductModel, { onDelete: 'CASCADE', nullable: false })
+  productModel: ProductModel;
 
   @ManyToOne(() => LoanOffer, { onDelete: 'CASCADE', nullable: false })
   loan_offer: LoanOffer;

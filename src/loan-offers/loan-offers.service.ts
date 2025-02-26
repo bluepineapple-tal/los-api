@@ -1,9 +1,9 @@
+import { ProductModel } from 'src/products/product-model/product-model.entity';
 import { Repository } from 'typeorm';
 
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Product } from '../products/product.entity';
 import { User } from '../users/user.entity';
 import { CreateLoanOfferDto } from './dtos/create-loan-offer.dto';
 import { UpdateLoanOfferDto } from './dtos/update-loan-offer.dto';
@@ -15,8 +15,8 @@ export class LoanOffersService {
     @InjectRepository(LoanOffer)
     private readonly loanOfferRepo: Repository<LoanOffer>,
 
-    @InjectRepository(Product)
-    private readonly productRepo: Repository<Product>,
+    @InjectRepository(ProductModel)
+    private readonly productRepo: Repository<ProductModel>,
 
     @InjectRepository(User)
     private readonly userRepo: Repository<User>,
@@ -25,7 +25,7 @@ export class LoanOffersService {
   async findAll(): Promise<LoanOffer[]> {
     // If we want to load relationships: .find({ relations: ['product', 'created_by'] })
     return this.loanOfferRepo.find({
-      relations: ['product', 'created_by'],
+      relations: ['product-model', 'created_by'],
     });
   }
 
@@ -44,8 +44,8 @@ export class LoanOffersService {
     const { productId, createdById, ...rest } = dto;
 
     // Check product
-    const product = await this.productRepo.findOneBy({ id: productId });
-    if (!product) {
+    const productModel = await this.productRepo.findOneBy({ id: productId });
+    if (!productModel) {
       throw new NotFoundException(`Product with id="${productId}" not found`);
     }
 
@@ -60,7 +60,7 @@ export class LoanOffersService {
 
     const newOffer = this.loanOfferRepo.create({
       ...rest,
-      product,
+      productModel,
       created_by: user ?? undefined,
     });
 
@@ -77,7 +77,7 @@ export class LoanOffersService {
           `Product with id="${dto.productId}" not found`,
         );
       }
-      offer.product = product;
+      offer.productModel = product;
     }
 
     if (dto.createdById) {

@@ -1,0 +1,9 @@
+### Create a new product make
+POST http://localhost:8000/product-make
+Content-Type: application/json
+
+{
+  "name": "Apple",
+  "description": "An American computer and consumer electronics company famous for creating the iPhone, iPad and Macintosh computers.",
+  "status": "active"
+}

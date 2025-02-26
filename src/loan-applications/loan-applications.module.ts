@@ -2,7 +2,7 @@ import { ApplicationDocument } from 'src/loan-applications/application-documents
 import { LoanApplicationHistory } from 'src/loan-applications/loan-application-history/loan-application-history.entity';
 import { LoanApplication } from 'src/loan-applications/loan-application.entity';
 import { LoanOffer } from 'src/loan-offers/loan-offer.entity';
-import { Product } from 'src/products/product.entity';
+import { ProductModel } from 'src/products/product-model/product-model.entity';
 import { Consumer } from 'src/users/consumer.entity';
 import { User } from 'src/users/user.entity';
 
@@ -24,7 +24,7 @@ import { LoanApplicationsService } from './loan-applications.service';
     TypeOrmModule.forFeature([
       LoanApplication,
       Consumer,
-      Product,
+      ProductModel,
       LoanOffer,
       User,
       ApplicationDocument,

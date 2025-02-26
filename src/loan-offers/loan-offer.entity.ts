@@ -8,17 +8,17 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { Product } from '../products/product.entity';
+import { ProductModel } from 'src/products/product-model/product-model.entity';
 
 @Entity()
 export class LoanOffer {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => Product, (product) => product.loanOffers, {
+  @ManyToOne(() => ProductModel, (productModel) => productModel.loanOffers, {
     onDelete: 'CASCADE',
   })
-  product: Product;
+  productModel: ProductModel;
 
   @Column('decimal', { precision: 5, scale: 2 })
   interest_rate: number;

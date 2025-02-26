@@ -1,12 +1,12 @@
 // src/loan-applications/loan-applications.service.ts
 
+import { ProductModel } from 'src/products/product-model/product-model.entity';
 import { Repository } from 'typeorm';
 
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { LoanOffer } from '../loan-offers/loan-offer.entity';
-import { Product } from '../products/product.entity';
 import { Consumer } from '../users/consumer.entity';
 import { User } from '../users/user.entity';
 import { CreateLoanApplicationDto } from './dtos/create-loan-application.dto';
@@ -22,8 +22,8 @@ export class LoanApplicationsService {
     @InjectRepository(Consumer)
     private readonly consumerRepository: Repository<Consumer>,
 
-    @InjectRepository(Product)
-    private readonly productRepository: Repository<Product>,
+    @InjectRepository(ProductModel)
+    private readonly productModelRepository: Repository<ProductModel>,
 
     @InjectRepository(LoanOffer)
     private readonly loanOfferRepository: Repository<LoanOffer>,
@@ -52,7 +52,7 @@ export class LoanApplicationsService {
   async create(dto: CreateLoanApplicationDto): Promise<LoanApplication> {
     const {
       consumerId,
-      productId,
+      productModelId,
       loanOfferId,
       application_date,
       requested_amount,
@@ -68,11 +68,13 @@ export class LoanApplicationsService {
       throw new NotFoundException(`Consumer with ID "${consumerId}" not found`);
     }
 
-    const product = await this.productRepository.findOne({
-      where: { id: productId },
+    const productModel = await this.productModelRepository.findOne({
+      where: { id: productModelId },
     });
-    if (!product) {
-      throw new NotFoundException(`Product with ID "${productId}" not found`);
+    if (!productModel) {
+      throw new NotFoundException(
+        `Product Model with ID "${productModelId}" not found`,
+      );
     }
 
     const loanOffer = await this.loanOfferRepository.findOne({
@@ -98,7 +100,7 @@ export class LoanApplicationsService {
 
     const application = this.loanApplicationRepository.create({
       consumer,
-      product,
+      productModel,
       loan_offer: loanOffer,
       underwriter: underwriter || null,
       application_date: application_date
@@ -132,16 +134,16 @@ export class LoanApplicationsService {
     }
 
     // Update Product if provided
-    if (dto.productId) {
-      const product = await this.productRepository.findOne({
-        where: { id: dto.productId },
+    if (dto.productModelId) {
+      const productModel = await this.productModelRepository.findOne({
+        where: { id: dto.productModelId },
       });
-      if (!product) {
+      if (!productModel) {
         throw new NotFoundException(
-          `Product with ID "${dto.productId}" not found`,
+          `Product with ID "${dto.productModelId}" not found`,
         );
       }
-      application.product = product;
+      application.productModel = productModel;
     }
 
     // Update LoanOffer if provided

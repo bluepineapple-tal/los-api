@@ -1,14 +1,18 @@
 import { IsEnum, IsOptional, IsUUID } from 'class-validator';
 
 import { Field, Float, InputType } from '@nestjs/graphql';
-
-import { ProductStatus } from '../product.entity';
+import { ProductStatus } from 'src/products/products.enum';
 
 @InputType()
-export class UpdateProductInput {
+export class UpdateProductModelInput {
   @Field({ nullable: true })
   @IsOptional()
   name?: string;
+
+  @Field()
+  @IsUUID()
+  @IsOptional()
+  makeId?: string;
 
   @Field({ nullable: true })
   @IsOptional()
@@ -22,12 +26,6 @@ export class UpdateProductInput {
   @IsOptional()
   @IsEnum(ProductStatus)
   status?: ProductStatus;
-
-  // If you allow changing vendor:
-  @Field({ nullable: true })
-  @IsOptional()
-  @IsUUID()
-  vendorId?: string;
 }
 
-export class UpdateProductDto extends UpdateProductInput {}
+export class UpdateProductModelDto extends UpdateProductModelInput {}
