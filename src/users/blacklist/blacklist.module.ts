@@ -1,4 +1,4 @@
-import { Blacklist } from 'src/entities/blacklist.entity';
+import { Blacklist } from 'src/users/blacklist/blacklist.entity';
 
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
