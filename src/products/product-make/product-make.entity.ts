@@ -1,4 +1,7 @@
+import slugify from 'slugify';
 import {
+  BeforeInsert,
+  BeforeUpdate,
   Column,
   CreateDateColumn,
   Entity,
@@ -28,6 +31,9 @@ export class ProductMake {
   })
   status: ProductStatus;
 
+  @Column({ unique: true })
+  slug: string;
+
   @CreateDateColumn()
   created_at: Date;
 
@@ -38,4 +44,14 @@ export class ProductMake {
 
   @OneToMany(() => ProductModel, (model) => model.make)
   models: ProductModel[];
+
+  // Lifecycle hook to generate/update the slug
+  @BeforeInsert()
+  @BeforeUpdate()
+  generateSlug() {
+    if (this.name) {
+      // The options lower: true and strict: true ensure a lowercase, URL-friendly string.
+      this.slug = slugify(this.name, { lower: true, strict: true });
+    }
+  }
 }

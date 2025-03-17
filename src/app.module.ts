@@ -18,6 +18,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppResolver } from './app.resolver';
 import { AppService } from './app.service';
+import { AuthModule } from './auth/auth.module';
+import { SuperTokensConfigService } from './config/supertokens.config';
 import { TypeOrmConfigService } from './config/typeorm.config';
 import { ExternalChecksModule } from './external-checks/external-checks.module';
 import { HealthCheckController } from './health-check/health-check.controller';
@@ -40,18 +42,21 @@ import { UsersModule } from './users/users.module';
       playground: true, // Optional: Enable the Apollo sandbox
     }),
     CqrsModule.forRoot(),
+    AuthModule.forRoot(),
     UsersModule,
     ProductsModule,
     LoanOffersModule,
     LoanApplicationsModule,
     UnderwritingModule,
     ExternalChecksModule,
+    AuthModule,
   ],
   controllers: [AppController, HealthCheckController],
   providers: [
     AppService,
     AppResolver,
     HealthCheckService,
+    SuperTokensConfigService,
     Logger,
     {
       provide: APP_PIPE,

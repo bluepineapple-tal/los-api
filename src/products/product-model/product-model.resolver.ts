@@ -22,11 +22,25 @@ export class ProductModelResolver {
     return this.modelService.findOne(id);
   }
 
+  @Query(() => ProductModelDTO, { name: 'productModelBySlug' })
+  async findOneBySlug(
+    @Args('slug', { type: () => String }) slug: string,
+  ): Promise<ProductModelDTO> {
+    return this.modelService.findOneBySlug(slug);
+  }
+
   @Query(() => [ProductModelDTO], { name: 'productModelsByMake' })
   async findByMake(
     @Args('makeId', { type: () => ID }) makeId: string,
   ): Promise<ProductModelDTO[]> {
     return this.modelService.findByMake(makeId);
+  }
+
+  @Query(() => [ProductModelDTO], { name: 'productModelsByMakeSlug' })
+  async findByMakeSlug(
+    @Args('slug', { type: () => String }) slug: string,
+  ): Promise<ProductModelDTO[]> {
+    return this.modelService.findByMakeSlug(slug);
   }
 
   @Mutation(() => ProductModelDTO)

@@ -18,6 +18,7 @@ export class CreateProductModelInput {
   @IsNotEmpty()
   description: string;
 
+  @IsNotEmpty()
   @Field(() => Float)
   price: number;
 

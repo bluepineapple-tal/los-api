@@ -22,6 +22,12 @@ export class ProductMakeResolver {
     return this.makeService.findOne(id);
   }
 
+  async findOneBySlug(
+    @Args('slug', { type: () => String }) slug: string,
+  ): Promise<ProductMakeDTO> {
+    return this.makeService.findBySlug(slug);
+  }
+
   @Mutation(() => ProductMakeDTO)
   async createProductMake(
     @Args('input') input: CreateProductMakeInput,

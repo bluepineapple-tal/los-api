@@ -1,5 +1,8 @@
+import slugify from 'slugify';
 import { LoanOffer } from 'src/loan-offers/loan-offer.entity';
 import {
+  BeforeInsert,
+  BeforeUpdate,
   Column,
   CreateDateColumn,
   Entity,
@@ -34,6 +37,9 @@ export class ProductModel {
   })
   status: ProductStatus;
 
+  @Column({ unique: true })
+  slug: string;
+
   @CreateDateColumn()
   created_at: Date;
 
@@ -47,4 +53,13 @@ export class ProductModel {
   @ManyToOne(() => ProductMake, (make) => make.models, { eager: true })
   @JoinColumn({ name: 'make_id' })
   make: ProductMake;
+
+  // Lifecycle hook to generate/update the slug
+  @BeforeInsert()
+  @BeforeUpdate()
+  generateSlug() {
+    if (this.name) {
+      this.slug = slugify(this.name, { lower: true, strict: true });
+    }
+  }
 }

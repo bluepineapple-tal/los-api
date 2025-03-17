@@ -28,6 +28,11 @@ export class ProductMakeController {
     return this.productMakeService.findOne(id);
   }
 
+  @Get('slug/:slug')
+  async findOneBySlug(@Param('slug') slug: string): Promise<ProductMake> {
+    return this.productMakeService.findBySlug(slug);
+  }
+
   @Post()
   async create(@Body() dto: CreateProductMakeDto): Promise<ProductMake> {
     return this.productMakeService.create(dto);
