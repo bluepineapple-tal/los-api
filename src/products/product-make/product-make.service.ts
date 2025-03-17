@@ -1,6 +1,10 @@
 import { Repository } from 'typeorm';
 
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { CreateProductMakeDto } from './dtos/create-product-make.dto';
@@ -28,9 +32,28 @@ export class ProductMakeService {
     return product;
   }
 
+  async findBySlug(slug: string): Promise<ProductMake> {
+    const product = await this.makeRepo.findOne({ where: { slug } });
+    if (!product) {
+      throw new NotFoundException(`Product with slug "${slug}" not found`);
+    }
+    return product;
+  }
+
   async create(dto: CreateProductMakeDto): Promise<ProductMake> {
     const product = this.makeRepo.create(dto);
-    return this.makeRepo.save(product);
+
+    try {
+      return await this.makeRepo.save(product);
+    } catch (error) {
+      // PostgreSQL unique violation error code
+      if (error.code === '23505') {
+        throw new ConflictException(
+          'A product make with these details already exists.',
+        );
+      }
+      throw error;
+    }
   }
 
   async update(id: string, dto: UpdateProductMakeDto): Promise<ProductMake> {

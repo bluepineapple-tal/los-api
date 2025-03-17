@@ -1,12 +1,16 @@
 import { Repository } from 'typeorm';
 
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { UpdateProductMakeDto } from '../product-make/dtos/update-product-make';
 import { ProductMake } from '../product-make/product-make.entity';
-import { ProductModel } from './product-model.entity';
 import { CreateProductModelDto } from './dtos/create-product-model.dto';
+import { UpdateProductModelDto } from './dtos/update-product-model.dto';
+import { ProductModel } from './product-model.entity';
 
 @Injectable()
 export class ProductModelService {
@@ -31,9 +35,30 @@ export class ProductModelService {
     return model;
   }
 
+  async findOneBySlug(slug: string): Promise<ProductModel> {
+    const model = await this.modelRepo.findOne({ where: { slug } });
+    if (!model) {
+      throw new NotFoundException(
+        `Product Model with slug "${slug}" not found`,
+      );
+    }
+    return model;
+  }
+
   async findByMake(makeId: string): Promise<ProductModel[]> {
     return this.modelRepo.find({
       where: { make: { id: makeId } }, // Assuming eager loading for 'make'
+      relations: ['make'],
+    });
+  }
+
+  async findByMakeSlug(slug: string): Promise<ProductModel[]> {
+    const make = await this.makeRepo.findOne({ where: { slug } });
+    if (!make) {
+      throw new NotFoundException(`Product Make with slug "${slug}" not found`);
+    }
+    return this.modelRepo.find({
+      where: { make: { id: make.id } },
       relations: ['make'],
     });
   }
@@ -46,11 +71,24 @@ export class ProductModelService {
       name: dto.name,
       price: dto.price,
       make,
+      description: dto.description,
+      status: dto.status,
     });
-    return this.modelRepo.save(newModel);
+
+    try {
+      return await this.modelRepo.save(newModel);
+    } catch (error) {
+      // PostgreSQL unique violation error code
+      if (error.code === '23505') {
+        throw new ConflictException(
+          'A product model with these details already exists.',
+        );
+      }
+      throw error;
+    }
   }
 
-  async update(id: string, dto: UpdateProductMakeDto): Promise<ProductModel> {
+  async update(id: string, dto: UpdateProductModelDto): Promise<ProductModel> {
     const model = await this.findOne(id);
     if (!model) {
       throw new NotFoundException(`Product Model with ID "${id}" not found`);
@@ -59,8 +97,9 @@ export class ProductModelService {
     if (dto.name !== undefined) model.name = dto.name;
     if (dto.description !== undefined) model.description = dto.description;
     if (dto.status !== undefined) model.status = dto.status;
+    if (dto.price !== undefined) model.price = dto.price;
 
-    return this.makeRepo.save(model);
+    return this.modelRepo.save(model);
   }
 
   async remove(id: string): Promise<boolean> {

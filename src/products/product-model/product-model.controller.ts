@@ -28,11 +28,21 @@ export class ProductModelController {
     return this.productModelService.findOne(id);
   }
 
+  @Get('slug/:slug')
+  async findOneBySlug(@Param('slug') slug: string): Promise<ProductModel> {
+    return this.productModelService.findOneBySlug(slug);
+  }
+
   @Get('make/:makeId')
   async findByMake(
     @Param('makeId', ParseUUIDPipe) makeId: string,
   ): Promise<ProductModel[]> {
     return this.productModelService.findByMake(makeId);
+  }
+
+  @Get('make/slug/:slug')
+  async findByMakeSlug(@Param('slug') slug: string): Promise<ProductModel[]> {
+    return this.productModelService.findByMakeSlug(slug);
   }
 
   @Post()
