@@ -41,6 +41,7 @@
     "pg": "^8.13.1",
     "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.1",
+    "slugify": "^1.6.6",
     "sqlite3": "^5.1.7",
     "supertokens-node": "^21.1.0",
     "typeorm": "^0.3.20",
