@@ -34,7 +34,7 @@ export class UpdateLoanOfferInput {
   @Field({ nullable: true })
   @IsOptional()
   @IsUUID()
-  productId?: string;
+  productModelId?: string;
 
   @Field({ nullable: true })
   @IsOptional()

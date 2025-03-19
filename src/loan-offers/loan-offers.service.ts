@@ -41,12 +41,16 @@ export class LoanOffersService {
   }
 
   async create(dto: CreateLoanOfferDto): Promise<LoanOffer> {
-    const { productId, createdById, ...rest } = dto;
+    const { productModelId, createdById, ...rest } = dto;
 
     // Check product
-    const productModel = await this.productRepo.findOneBy({ id: productId });
+    const productModel = await this.productRepo.findOneBy({
+      id: productModelId,
+    });
     if (!productModel) {
-      throw new NotFoundException(`Product with id="${productId}" not found`);
+      throw new NotFoundException(
+        `Product with id="${productModelId}" not found`,
+      );
     }
 
     // Optional: Check user if passed
@@ -70,11 +74,13 @@ export class LoanOffersService {
   async update(id: string, dto: UpdateLoanOfferDto): Promise<LoanOffer> {
     const offer = await this.findOne(id);
 
-    if (dto.productId) {
-      const product = await this.productRepo.findOneBy({ id: dto.productId });
+    if (dto.productModelId) {
+      const product = await this.productRepo.findOneBy({
+        id: dto.productModelId,
+      });
       if (!product) {
         throw new NotFoundException(
-          `Product with id="${dto.productId}" not found`,
+          `Product with id="${dto.productModelId}" not found`,
         );
       }
       offer.productModel = product;

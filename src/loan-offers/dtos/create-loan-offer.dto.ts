@@ -36,7 +36,7 @@ export class CreateLoanOfferInput {
   // We reference existing Product & User
   @Field()
   @IsUUID()
-  productId: string;
+  productModelId: string;
 
   @Field({ nullable: true })
   @IsOptional()
