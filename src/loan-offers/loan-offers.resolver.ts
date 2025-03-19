@@ -21,6 +21,13 @@ export class LoanOffersResolver {
     return this.loanOffersService.findOne(id);
   }
 
+  @Query(() => [LoanOfferDTO], { name: 'loanOffersByProductModel' })
+  async findByProductModel(
+    @Args('productModelId', { type: () => ID }) productModelId: string,
+  ): Promise<LoanOfferDTO[]> {
+    return this.loanOffersService.findByProductModel(productModelId);
+  }
+
   @Mutation(() => LoanOfferDTO)
   async createLoanOffer(
     @Args('input') input: CreateLoanOfferInput,

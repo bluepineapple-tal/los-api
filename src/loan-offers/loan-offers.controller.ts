@@ -28,6 +28,13 @@ export class LoanOffersController {
     return this.loanOffersService.findOne(id);
   }
 
+  @Get('product-model/:id')
+  async findByProductModel(
+    @Param('id', ParseUUIDPipe) productModelId: string,
+  ): Promise<LoanOffer[]> {
+    return this.loanOffersService.findByProductModel(productModelId);
+  }
+
   @Post()
   async create(@Body() dto: CreateLoanOfferDto): Promise<LoanOffer> {
     return this.loanOffersService.create(dto);

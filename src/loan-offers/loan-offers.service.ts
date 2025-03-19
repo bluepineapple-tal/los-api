@@ -40,6 +40,20 @@ export class LoanOffersService {
     return offer;
   }
 
+  async findByProductModel(productModelId: string): Promise<LoanOffer[]> {
+    const offers = await this.loanOfferRepo.find({
+      where: { productModel: { id: productModelId } },
+      relations: ['productModel', 'created_by'],
+    });
+
+    if (!offers || offers.length === 0) {
+      throw new NotFoundException(
+        `No loan offers found for product model with id "${productModelId}"`,
+      );
+    }
+    return offers;
+  }
+
   async create(dto: CreateLoanOfferDto): Promise<LoanOffer> {
     const { productModelId, createdById, ...rest } = dto;
 
