@@ -1,0 +1,21 @@
+// [NOTE] Repalce :id with actual ids while sending the requests
+
+### List all loan offers
+GET http://localhost:8000/loan-offers
+
+### Get a specific loan offer by ID
+GET http://localhost:8000/loan-offers/:id
+
+### Get all loan offers by product model ID
+GET http://localhost:8000/loan-offers/product-model/410b9d88-4b61-40e4-9286-d175a00890df
+
+### Create a new loan offer
+POST http://localhost:8000/loan-offers
+Content-Type: application/json
+
+### Update a specific loan offer
+PUT http://localhost:8000/loan-offers/:id
+Content-Type: application/json
+
+### Delete a specific loan offer
+DELETE http://localhost:8000/loan-offers/:id

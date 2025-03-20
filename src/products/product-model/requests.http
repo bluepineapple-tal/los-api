@@ -1,0 +1,17 @@
+// [NOTE] Repalce :id with actual ids while sending the requests
+
+### List all product models
+GET http://localhost:8000/product-model
+
+### Get a specific product model by ID
+GET http://localhost:8000/product-model/:id
+
+### Create a new product modelsPOST http://localhost:8000/product-model
+Content-Type: application/json
+
+### Update a specific product model
+PUT http://localhost:8000/product-model/:id
+Content-Type: application/json
+
+### Delete a specific product model
+DELETE http://localhost:8000/product-model/:id
