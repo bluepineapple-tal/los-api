@@ -1,12 +1,21 @@
+import { Field } from "@nestjs/graphql";
+import { IsString } from "class-validator";
 import { UUID } from "crypto";
 import { Timestamp } from "typeorm";
 
 
 
 export class KycCheckDto{
+
+    @IsString()
     request_id: string; //check with AM for which data type to be used here.
-    timestamp: Timestamp; //check with AM for which data type to be used here.
+    
+    @Field()
+    timestamp: Date; //check with AM for which data type to be used here.
+    
+    @IsString()
     requested_by: string; //check with AM for which data type to be used here.
+    
     customer: Customer;
 }
 
