@@ -12,18 +12,19 @@ let responseBody = {
 
 @Controller('kyc-check')
 export class KycCheckController {
-    constructor(private readonly kycService: KycCheckService){}
+    constructor(private readonly kycService: KycCheckService) { }
 
     @Get()
-    test(){
-        return('in kyc-check.test: working...')
+    test() {
+        return ('in kyc-check.test: working...')
     }
 
     @Post('kyc/initiate')
-    async initiateCheck(@Body() kycCheckDto: any){
-    // KycCheckDto){
-        try{
-            console.log(`[initiateCheck].try: entry.\n`)
+    async initiateCheck(@Body() kycCheckDto: KycCheckDto){    //when used this, the body is not getting captured.
+        try {
+            console.log(`[(controller)kyc/initiate].try: entry.\n`)
+            console.log(`body captured: ${JSON.stringify(kycCheckDto)}`)
+
             let res = await this.kycService.initiate_check(kycCheckDto);
             console.log(`response received back from [kycService.initiate_check]: ${JSON.stringify(res)}`)
             responseBody = {
@@ -31,25 +32,25 @@ export class KycCheckController {
                 response: res,  //use JSON.stringify if required here.
                 err: false
             }
-            console.log(`[initiateCheck].try: exit.\n`)
+            console.log(`[(controller)kyc/initiate].try: exit.\n`)
             return responseBody;
         }
-        catch(e){
-            console.log(`[kyc/initiate] err: ${e}`)
-            responseBody.status=false;
-            responseBody.response=null;
-            responseBody.err=e
+        catch (e) {
+            console.log(`[(controller)kyc/initiate] err: ${e}`)
+            responseBody.status = false;
+            responseBody.response = null;
+            responseBody.err = e
             return responseBody
         }
     }
 
     @Post('kyc/get_status')
-    getKycStatus(@Body() request_id: string){
-        try{
-            return('in kyc-check.kyc.get_status: working...')
+    getKycStatus(@Body() request_id: string) {
+        try {
+            return ('in [(controller)kyc/get_status]: working...')
         }
-        catch(e){
-            console.log(`[kyc/initiate] err: ${e}`)
+        catch (e) {
+            console.log(`[(controller)kyc/get_status] err: ${e}`)
             return 'err occurred.'
         }
     }

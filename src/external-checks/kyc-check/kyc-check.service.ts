@@ -6,7 +6,9 @@ import { KycCheckResponse, Recc, RiskAssessment, Status, Verification } from './
 @Injectable()
 export class KycCheckService {
 
-    async initiate_check(kycCheckDto: KycCheckDto): Promise<KycCheckResponse> {
+    async initiate_check(kycCheckDto: KycCheckDto)
+    // :Promise<Boolean>{
+    : Promise<KycCheckResponse> {
         try {
             console.log(`[(service)KycCheckService.initiate_check].try: entry.\n`)
             const responseBody = new KycCheckResponse();
@@ -33,26 +35,26 @@ export class KycCheckService {
         switch (val) {
             case 0: //Scenario 1: Fully Verified Customer 
                 {   
-                    console.log('case 1:')
+                    console.log('[(service)KycCheckService.scenarioSeperator] case 1: Fully Verified Customer')
                     return this.generateScenario1(kycCheckBody, responseBody)
                 }
             case 1: //Scenario 2: Missing or Invalid Document 
                 {
-                    console.log('case 2:')
+                    console.log('[(service)KycCheckService.scenarioSeperator] case 2: Missing or Invalid Document')
                     return this.generateScenario2(kycCheckBody, responseBody)
                 }
             case 2: //Scenario 3: High-Risk Customer 
                 {
-                    console.log('case 3:')
+                    console.log('[(service)KycCheckService.scenarioSeperator] case 3: High-Risk Customer')
                     return this.generateScenario3(kycCheckBody, responseBody)
                 }
             case 3: //Scenario 4: KYC System Failure 
                 {
-                    console.log('case 4:')
+                    console.log('[(service)KycCheckService.scenarioSeperator] case 4: KYC System Failure')
                     return this.generateScenario4(kycCheckBody, responseBody)
                 } default: //Scenario 4: KYC System Failure 
                 {
-                    console.log('case default:')
+                    console.log('[(service)KycCheckService.scenarioSeperator] case default: Unknown error')
                     return this.generateScenario_unknown(kycCheckBody, responseBody)
                 }
         }
@@ -60,7 +62,7 @@ export class KycCheckService {
 
     /**
      * 
-     * Scenario 0: Fully Verified Customer 
+     * Scenario 1: Fully Verified Customer 
      * Identity Verification: Verified 
      * Document Verification: All documents valid 
      * Address Verification: Confirmed 
@@ -100,7 +102,7 @@ export class KycCheckService {
 
 
     /**
-     * Scenario 1: Missing or Invalid Document 
+     * Scenario 2: Missing or Invalid Document 
      * Identity Verification: Verified 
      * Document Verification: Passport valid, utility bill invalid 
      * Address Verification: Unconfirmed 
@@ -140,7 +142,7 @@ export class KycCheckService {
 
     /**
      * 
-     * Scenario 2: High-Risk Customer 
+     * Scenario 3: High-Risk Customer 
      * Identity Verification: Verified 
      * Document Verification: Valid 
      * Address Verification: Confirmed 
