@@ -29,7 +29,7 @@ export class KycCheckController {
             console.log(`response received back from [kycService.initiate_check]: ${JSON.stringify(res)}`)
             responseBody = {
                 status: true,
-                response: res,  //use JSON.stringify if required here.
+                response: JSON.stringify(res),  //use JSON.stringify if required here.
                 err: false
             }
             console.log(`[(controller)kyc/initiate].try: exit.\n`)
