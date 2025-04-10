@@ -1,8 +1,5 @@
 import { Field } from "@nestjs/graphql";
 import { IsString } from "class-validator";
-import { UUID } from "crypto";
-import { Timestamp } from "typeorm";
-
 
 
 export class KycCheckDto{
