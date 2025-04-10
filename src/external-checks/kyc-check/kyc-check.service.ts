@@ -20,7 +20,7 @@ export class KycCheckService {
             // console.log(`Dto received: ${kycCheckDto}`)
             //save and send the received DTO from request to the actual API.
 
-            let rand = Math.floor(Math.random() * 5)+1; // returns 0, 1, 2, 3, or 4
+            let rand = Math.floor(Math.random() * 4)+1; // returns 1, 2, 3, or 4
             console.log(`[(service)KycCheckService.initiate_check] random value generated = ${rand}.`)
             let result = await this.scenarioSeperator(kycCheckDto, rand, responseBody)
             console.log(`[(service)KycCheckService.initiate_check].try: exit.\n`)
@@ -33,22 +33,22 @@ export class KycCheckService {
     scenarioSeperator = (kycCheckBody: KycCheckDto, val: number, responseBody: KycCheckResponse) => {
 
         switch (val) {
-            case 0: //Scenario 1: Fully Verified Customer 
+            case 1: //Scenario 1: Fully Verified Customer 
                 {   
                     console.log('[(service)KycCheckService.scenarioSeperator] case 1: Fully Verified Customer')
                     return this.generateScenario1(kycCheckBody, responseBody)
                 }
-            case 1: //Scenario 2: Missing or Invalid Document 
+            case 2: //Scenario 2: Missing or Invalid Document 
                 {
                     console.log('[(service)KycCheckService.scenarioSeperator] case 2: Missing or Invalid Document')
                     return this.generateScenario2(kycCheckBody, responseBody)
                 }
-            case 2: //Scenario 3: High-Risk Customer 
+            case 3: //Scenario 3: High-Risk Customer 
                 {
                     console.log('[(service)KycCheckService.scenarioSeperator] case 3: High-Risk Customer')
                     return this.generateScenario3(kycCheckBody, responseBody)
                 }
-            case 3: //Scenario 4: KYC System Failure 
+            case 4: //Scenario 4: KYC System Failure 
                 {
                     console.log('[(service)KycCheckService.scenarioSeperator] case 4: KYC System Failure')
                     return this.generateScenario4(kycCheckBody, responseBody)
