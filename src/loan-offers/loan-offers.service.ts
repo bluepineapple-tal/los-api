@@ -1,4 +1,3 @@
-import { ProductModel } from 'src/products/product-model/product-model.entity';
 import { Repository } from 'typeorm';
 
 import { Injectable, NotFoundException } from '@nestjs/common';
@@ -15,24 +14,21 @@ export class LoanOffersService {
     @InjectRepository(LoanOffer)
     private readonly loanOfferRepo: Repository<LoanOffer>,
 
-    @InjectRepository(ProductModel)
-    private readonly productRepo: Repository<ProductModel>,
-
     @InjectRepository(User)
     private readonly userRepo: Repository<User>,
   ) {}
 
   async findAll(): Promise<LoanOffer[]> {
-    // If we want to load relationships: .find({ relations: ['product', 'created_by'] })
+    // If we want to load relationships: .find({ relations: 'created_by'] })
     return this.loanOfferRepo.find({
-      relations: ['product-model', 'created_by'],
+      relations: ['created_by'],
     });
   }
 
   async findOne(id: string): Promise<LoanOffer> {
     const offer = await this.loanOfferRepo.findOne({
       where: { id },
-      relations: ['product', 'created_by'],
+      relations: ['created_by'],
     });
     if (!offer) {
       throw new NotFoundException(`LoanOffer with id="${id}" not found`);
@@ -40,65 +36,34 @@ export class LoanOffersService {
     return offer;
   }
 
-  async findByProductModel(productModelId: string): Promise<LoanOffer[]> {
-    const offers = await this.loanOfferRepo.find({
-      where: { productModel: { id: productModelId } },
-      relations: ['productModel', 'created_by'],
-    });
-
-    if (!offers || offers.length === 0) {
-      throw new NotFoundException(
-        `No loan offers found for product model with id "${productModelId}"`,
-      );
-    }
-    return offers;
-  }
-
   async create(dto: CreateLoanOfferDto): Promise<LoanOffer> {
-    const { productModelId, createdById, ...rest } = dto;
+    const { createdById, valid_from, valid_to, ...rest } = dto;
 
-    // Check product
-    const productModel = await this.productRepo.findOneBy({
-      id: productModelId,
-    });
-    if (!productModel) {
-      throw new NotFoundException(
-        `Product with id="${productModelId}" not found`,
-      );
-    }
-
-    // Optional: Check user if passed
-    let user: User | null = null;
-    if (createdById) {
-      user = await this.userRepo.findOneBy({ id: createdById });
-      if (!user) {
-        throw new NotFoundException(`User with id="${createdById}" not found`);
-      }
-    }
-
-    const newOffer = this.loanOfferRepo.create({
+    const offer = this.loanOfferRepo.create({
       ...rest,
-      productModel,
-      created_by: user ?? undefined,
+      /* date strings ➜ Date objects */
+      valid_from: new Date(valid_from),
+      valid_to: new Date(valid_to),
     });
 
-    return this.loanOfferRepo.save(newOffer);
+    if (createdById) {
+      const creator = await this.userRepo.findOneBy({ id: createdById });
+      if (!creator)
+        throw new NotFoundException(`User ${createdById} not found`);
+      offer.created_by = creator;
+    }
+
+    return this.loanOfferRepo.save(offer);
   }
 
   async update(id: string, dto: UpdateLoanOfferDto): Promise<LoanOffer> {
     const offer = await this.findOne(id);
-
-    if (dto.productModelId) {
-      const product = await this.productRepo.findOneBy({
-        id: dto.productModelId,
-      });
-      if (!product) {
-        throw new NotFoundException(
-          `Product with id="${dto.productModelId}" not found`,
-        );
-      }
-      offer.productModel = product;
-    }
+    Object.assign(offer, {
+      ...dto,
+      /* cast possible date strings */
+      valid_from: dto.valid_from ? new Date(dto.valid_from) : offer.valid_from,
+      valid_to: dto.valid_to ? new Date(dto.valid_to) : offer.valid_to,
+    });
 
     if (dto.createdById) {
       const user = await this.userRepo.findOneBy({ id: dto.createdById });
@@ -136,5 +101,27 @@ export class LoanOffersService {
     const offer = await this.findOne(id);
     await this.loanOfferRepo.remove(offer);
     return true;
+  }
+
+  /* ==========  NEW ELIGIBILITY LOOK‑UP  ========== */
+
+  /**
+   * All active offers whose amount & date windows envelop the requested amount
+   * and application date (defaults to today).
+   */
+  async findEligible(
+    amount: number,
+    onDate: Date = new Date(),
+  ): Promise<LoanOffer[]> {
+    return this.loanOfferRepo
+      .createQueryBuilder('offer')
+      .where('offer.is_active = true')
+      .andWhere(':amount BETWEEN offer.min_amount AND offer.max_amount', {
+        amount,
+      })
+      .andWhere(':date BETWEEN offer.valid_from AND offer.valid_to', {
+        date: onDate,
+      })
+      .getMany();
   }
 }

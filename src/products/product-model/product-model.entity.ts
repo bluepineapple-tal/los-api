@@ -1,5 +1,4 @@
 import slugify from 'slugify';
-import { LoanOffer } from 'src/loan-offers/loan-offer.entity';
 import {
   BeforeInsert,
   BeforeUpdate,
@@ -8,7 +7,6 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -45,10 +43,6 @@ export class ProductModel {
 
   @UpdateDateColumn()
   updated_at: Date;
-
-  // Relationships
-  @OneToMany(() => LoanOffer, (offer) => offer.productModel)
-  loanOffers: LoanOffer[];
 
   @ManyToOne(() => ProductMake, (make) => make.models, { eager: true })
   @JoinColumn({ name: 'make_id' })

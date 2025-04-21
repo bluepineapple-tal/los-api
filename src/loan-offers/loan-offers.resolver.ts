@@ -21,11 +21,15 @@ export class LoanOffersResolver {
     return this.loanOffersService.findOne(id);
   }
 
-  @Query(() => [LoanOfferDTO], { name: 'loanOffersByProductModel' })
-  async findByProductModel(
-    @Args('productModelId', { type: () => ID }) productModelId: string,
+  @Query(() => [LoanOfferDTO], { name: 'eligibleLoanOffers' })
+  async eligible(
+    @Args('amount') amount: number,
+    @Args('applicationDate', { nullable: true }) applicationDate?: Date,
   ): Promise<LoanOfferDTO[]> {
-    return this.loanOffersService.findByProductModel(productModelId);
+    return this.loanOffersService.findEligible(
+      amount,
+      applicationDate ? new Date(applicationDate) : undefined,
+    );
   }
 
   @Mutation(() => LoanOfferDTO)
