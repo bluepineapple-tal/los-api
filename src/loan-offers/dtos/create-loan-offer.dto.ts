@@ -29,7 +29,6 @@ export class CreateLoanOfferInput {
   @Field({ defaultValue: true }) @IsBoolean() is_active: boolean;
 
   /* optional legacy relations */
-  @Field({ nullable: true }) @IsOptional() @IsUUID() productModelId?: string;
   @Field({ nullable: true }) @IsOptional() @IsUUID() createdById?: string;
 }
 export class CreateLoanOfferDto extends CreateLoanOfferInput {}

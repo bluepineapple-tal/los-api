@@ -27,7 +27,6 @@ mutation {
       offer_name: "Special Diwali Offer"
       offer_details: "Some details"
       is_active: true
-      productId: "UUID_of_product"
       createdById: "UUID_of_user"
     }
   ) {
