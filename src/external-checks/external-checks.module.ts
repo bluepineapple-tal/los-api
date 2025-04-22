@@ -10,7 +10,11 @@ import { CreditCheckModule } from './credit-check/credit-check.module';
 import { KycCheckModule } from './kyc-check/kyc-check.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([ExternalCheck, LoanApplication]), CreditCheckModule, KycCheckModule],
+  imports: [
+    TypeOrmModule.forFeature([ExternalCheck, LoanApplication]),
+    CreditCheckModule,
+    KycCheckModule
+  ],
   providers: [ExternalChecksService, ExternalChecksController],
   controllers: [ExternalChecksController],
   exports: [ExternalChecksService],
