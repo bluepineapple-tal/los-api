@@ -18,7 +18,7 @@ export class CreateLoanApplicationInput {
 
   @Field()
   @IsUUID()
-  productModelId: string;
+  productCategoryId: string;
 
   @Field()
   @IsUUID()

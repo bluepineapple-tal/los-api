@@ -1,0 +1,33 @@
+### Get all categories
+GET http://localhost:8000/product-categories
+###
+
+### Create a category
+POST http://localhost:8000/product-categories
+Content-Type: application/json
+
+{
+  "name": "Electronics",
+  "description": "Gadgets and devices",
+  "status": "active"
+}
+###
+
+### Get one by id
+GET http://localhost:8000/product-categories/id
+###
+
+### Update a category
+PUT http://localhost:8000/product-categories/id
+Content-Type: application/json
+
+{
+  "name": "Home Electronics",
+  "description": "TVs, speakers, etc.",
+  "status": "inactive"
+}
+###
+
+### Delete a category
+DELETE http://localhost:8000/product-categories/id
+###

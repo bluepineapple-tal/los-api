@@ -1,10 +1,12 @@
-import { ProductModel } from 'src/products/product-model/product-model.entity';
+import { ProductCategory } from 'src/products/product-categories/product-category.entity';
 import { User } from 'src/users/user.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -29,11 +31,16 @@ export class LoanApplication {
   @ManyToOne(() => Consumer, { onDelete: 'CASCADE' })
   consumer: Consumer;
 
-  @ManyToOne(() => ProductModel, { onDelete: 'CASCADE', nullable: false })
-  productModel: ProductModel;
+  /**
+   * One‑to‑one link to ProductCategory.
+   * Each application must pick exactly one category.
+   */
+  @OneToOne(() => ProductCategory, { nullable: false, cascade: false })
+  @JoinColumn({ name: 'product_category_id' })
+  productCategory: ProductCategory;
 
-  @ManyToOne(() => LoanOffer, { onDelete: 'CASCADE', nullable: false })
-  loan_offer: LoanOffer;
+  @ManyToOne(() => LoanOffer, { onDelete: 'CASCADE', nullable: true })
+  selectedOffer?: LoanOffer;
 
   @Column({ type: 'timestamp' })
   application_date: Date;
@@ -51,14 +58,14 @@ export class LoanApplication {
   @ManyToOne(() => User, (user) => user.underwrittenApplications, {
     nullable: true,
   })
-  underwriter?: User; // assigned underwriter
+  underwriter?: User;
 
   @Column({ default: false })
   manual_review_needed: boolean;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'timestamp' })
   created_at: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ type: 'timestamp' })
   updated_at: Date;
 }

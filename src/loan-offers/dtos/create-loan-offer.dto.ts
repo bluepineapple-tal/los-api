@@ -1,47 +1,34 @@
 import { Field, Float, InputType } from '@nestjs/graphql';
 import {
   IsBoolean,
+  IsDateString,
   IsNotEmpty,
   IsNumber,
   IsOptional,
   IsUUID,
+  Min,
 } from 'class-validator';
 
 @InputType()
 export class CreateLoanOfferInput {
-  @Field(() => Float)
-  @IsNumber()
-  interest_rate: number;
+  /* pricing */
+  @Field(() => Float) @IsNumber() interest_rate: number;
+  @Field() @IsNumber() tenure_months: number;
+  @Field(() => Float) @IsNumber() processing_fee: number;
 
-  @Field()
-  @IsNumber()
-  tenure_months: number;
+  /* ranges */
+  @Field(() => Float) @IsNumber() @Min(0) min_amount: number;
+  @Field(() => Float) @IsNumber() @Min(0) max_amount: number;
 
-  @Field(() => Float)
-  @IsNumber()
-  processing_fee: number;
+  @Field() @IsDateString() valid_from: string; // ISO date
+  @Field() @IsDateString() valid_to: string;
 
-  @Field()
-  @IsNotEmpty()
-  offer_name: string;
+  /* misc */
+  @Field() @IsNotEmpty() offer_name: string;
+  @Field({ nullable: true }) @IsOptional() offer_details?: string;
+  @Field({ defaultValue: true }) @IsBoolean() is_active: boolean;
 
-  @Field({ nullable: true })
-  @IsOptional()
-  offer_details?: string;
-
-  @Field({ defaultValue: true })
-  @IsBoolean()
-  is_active: boolean;
-
-  // We reference existing Product & User
-  @Field()
-  @IsUUID()
-  productModelId: string;
-
-  @Field({ nullable: true })
-  @IsOptional()
-  @IsUUID()
-  createdById?: string; // The user who created it
+  /* optional legacy relations */
+  @Field({ nullable: true }) @IsOptional() @IsUUID() createdById?: string;
 }
-
 export class CreateLoanOfferDto extends CreateLoanOfferInput {}

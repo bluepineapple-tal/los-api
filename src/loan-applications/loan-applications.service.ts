@@ -1,6 +1,6 @@
 // src/loan-applications/loan-applications.service.ts
 
-import { ProductModel } from 'src/products/product-model/product-model.entity';
+import { ProductCategory } from 'src/products/product-categories/product-category.entity';
 import { Repository } from 'typeorm';
 
 import { Injectable, NotFoundException } from '@nestjs/common';
@@ -17,42 +17,52 @@ import { ApplicationStatus, LoanApplication } from './loan-application.entity';
 export class LoanApplicationsService {
   constructor(
     @InjectRepository(LoanApplication)
-    private readonly loanApplicationRepository: Repository<LoanApplication>,
+    private readonly repo: Repository<LoanApplication>,
 
     @InjectRepository(Consumer)
-    private readonly consumerRepository: Repository<Consumer>,
+    private readonly consumerRepo: Repository<Consumer>,
 
-    @InjectRepository(ProductModel)
-    private readonly productModelRepository: Repository<ProductModel>,
+    @InjectRepository(ProductCategory)
+    private readonly categoryRepo: Repository<ProductCategory>,
 
     @InjectRepository(LoanOffer)
-    private readonly loanOfferRepository: Repository<LoanOffer>,
+    private readonly offerRepo: Repository<LoanOffer>,
 
     @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
+    private readonly userRepo: Repository<User>,
   ) {}
 
   async findAll(): Promise<LoanApplication[]> {
-    return this.loanApplicationRepository.find({
-      relations: ['consumer', 'product', 'loan_offer', 'underwriter'],
+    return this.repo.find({
+      relations: [
+        'consumer',
+        'productCategory',
+        'selectedOffer',
+        'underwriter',
+      ],
     });
   }
 
   async findOne(id: string): Promise<LoanApplication> {
-    const application = await this.loanApplicationRepository.findOne({
+    const app = await this.repo.findOne({
       where: { id },
-      relations: ['consumer', 'product', 'loan_offer', 'underwriter'],
+      relations: [
+        'consumer',
+        'productCategory',
+        'selectedOffer',
+        'underwriter',
+      ],
     });
-    if (!application) {
-      throw new NotFoundException(`Loan Application with ID "${id}" not found`);
+    if (!app) {
+      throw new NotFoundException(`LoanApplication ${id} not found`);
     }
-    return application;
+    return app;
   }
 
   async create(dto: CreateLoanApplicationDto): Promise<LoanApplication> {
     const {
       consumerId,
-      productModelId,
+      productCategoryId,
       loanOfferId,
       application_date,
       requested_amount,
@@ -60,138 +70,116 @@ export class LoanApplicationsService {
       underwriterId,
     } = dto;
 
-    // Look up Consumer, Product, LoanOffer, Underwriter
-    const consumer = await this.consumerRepository.findOne({
-      where: { id: consumerId },
-    });
+    // consumer
+    const consumer = await this.consumerRepo.findOneBy({ id: consumerId });
     if (!consumer) {
-      throw new NotFoundException(`Consumer with ID "${consumerId}" not found`);
+      throw new NotFoundException(`Consumer ${consumerId} not found`);
     }
 
-    const productModel = await this.productModelRepository.findOne({
-      where: { id: productModelId },
+    // product category
+    const category = await this.categoryRepo.findOneBy({
+      id: productCategoryId,
     });
-    if (!productModel) {
+    if (!category) {
       throw new NotFoundException(
-        `Product Model with ID "${productModelId}" not found`,
+        `ProductCategory ${productCategoryId} not found`,
       );
     }
 
-    const loanOffer = await this.loanOfferRepository.findOne({
-      where: { id: loanOfferId },
-    });
-    if (!loanOffer) {
-      throw new NotFoundException(
-        `Loan Offer with ID "${loanOfferId}" not found`,
-      );
-    }
-
-    let underwriter: User = null;
-    if (underwriterId) {
-      underwriter = await this.userRepository.findOne({
-        where: { id: underwriterId },
-      });
-      if (!underwriter) {
-        throw new NotFoundException(
-          `Underwriter with ID "${underwriterId}" not found`,
-        );
+    // optional selected offer
+    let offer: LoanOffer = null;
+    if (loanOfferId) {
+      offer = await this.offerRepo.findOneBy({ id: loanOfferId });
+      if (!offer) {
+        throw new NotFoundException(`LoanOffer ${loanOfferId} not found`);
       }
     }
 
-    const application = this.loanApplicationRepository.create({
+    // optional underwriter
+    let underwriter: User = null;
+    if (underwriterId) {
+      underwriter = await this.userRepo.findOneBy({ id: underwriterId });
+      if (!underwriter) {
+        throw new NotFoundException(`User ${underwriterId} not found`);
+      }
+    }
+
+    const application = this.repo.create({
       consumer,
-      productModel,
-      loan_offer: loanOffer,
-      underwriter: underwriter || null,
+      productCategory: category,
+      selectedOffer: offer,
       application_date: application_date
         ? new Date(application_date)
         : new Date(),
       requested_amount,
-      status: status || ApplicationStatus.DRAFT,
-      manual_review_needed: false, // default to false
+      status: status ?? ApplicationStatus.DRAFT,
+      underwriter,
+      manual_review_needed: false,
     });
 
-    return this.loanApplicationRepository.save(application);
+    return this.repo.save(application);
   }
 
   async update(
     id: string,
     dto: UpdateLoanApplicationDto,
   ): Promise<LoanApplication> {
-    const application = await this.findOne(id);
+    const app = await this.findOne(id);
 
-    // Update Consumer if provided
     if (dto.consumerId) {
-      const consumer = await this.consumerRepository.findOne({
-        where: { id: dto.consumerId },
+      const consumer = await this.consumerRepo.findOneBy({
+        id: dto.consumerId,
       });
-      if (!consumer) {
-        throw new NotFoundException(
-          `Consumer with ID "${dto.consumerId}" not found`,
-        );
-      }
-      application.consumer = consumer;
+      if (!consumer)
+        throw new NotFoundException(`Consumer ${dto.consumerId} not found`);
+      app.consumer = consumer;
     }
 
-    // Update Product if provided
-    if (dto.productModelId) {
-      const productModel = await this.productModelRepository.findOne({
-        where: { id: dto.productModelId },
+    if (dto.productCategoryId) {
+      const category = await this.categoryRepo.findOneBy({
+        id: dto.productCategoryId,
       });
-      if (!productModel) {
+      if (!category)
         throw new NotFoundException(
-          `Product with ID "${dto.productModelId}" not found`,
+          `ProductCategory ${dto.productCategoryId} not found`,
         );
-      }
-      application.productModel = productModel;
+      app.productCategory = category;
     }
 
-    // Update LoanOffer if provided
     if (dto.loanOfferId) {
-      const loanOffer = await this.loanOfferRepository.findOne({
-        where: { id: dto.loanOfferId },
-      });
-      if (!loanOffer) {
-        throw new NotFoundException(
-          `Loan Offer with ID "${dto.loanOfferId}" not found`,
-        );
-      }
-      application.loan_offer = loanOffer;
+      const offer = await this.offerRepo.findOneBy({ id: dto.loanOfferId });
+      if (!offer)
+        throw new NotFoundException(`LoanOffer ${dto.loanOfferId} not found`);
+      app.selectedOffer = offer;
     }
 
-    // Update requested_amount
     if (dto.requested_amount !== undefined) {
-      application.requested_amount = dto.requested_amount;
+      app.requested_amount = dto.requested_amount;
     }
 
-    // Update status
     if (dto.status) {
-      application.status = dto.status;
+      app.status = dto.status;
     }
 
-    // Update underwriter if provided
     if (dto.underwriterId) {
-      const underwriter = await this.userRepository.findOne({
-        where: { id: dto.underwriterId },
+      const underwriter = await this.userRepo.findOneBy({
+        id: dto.underwriterId,
       });
-      if (!underwriter) {
-        throw new NotFoundException(
-          `Underwriter with ID "${dto.underwriterId}" not found`,
-        );
-      }
-      application.underwriter = underwriter;
+      if (!underwriter)
+        throw new NotFoundException(`User ${dto.underwriterId} not found`);
+      app.underwriter = underwriter;
     }
 
     if (dto.manual_review_needed !== undefined) {
-      application.manual_review_needed = dto.manual_review_needed;
+      app.manual_review_needed = dto.manual_review_needed;
     }
 
-    return this.loanApplicationRepository.save(application);
+    return this.repo.save(app);
   }
 
   async remove(id: string): Promise<boolean> {
-    const application = await this.findOne(id);
-    await this.loanApplicationRepository.remove(application);
+    const app = await this.findOne(id);
+    await this.repo.remove(app);
     return true;
   }
 }

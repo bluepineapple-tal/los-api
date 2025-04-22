@@ -7,6 +7,7 @@ import {
   ParseUUIDPipe,
   Post,
   Put,
+  Query,
 } from '@nestjs/common';
 
 import { CreateLoanOfferDto } from './dtos/create-loan-offer.dto';
@@ -28,11 +29,15 @@ export class LoanOffersController {
     return this.loanOffersService.findOne(id);
   }
 
-  @Get('product-model/:id')
-  async findByProductModel(
-    @Param('id', ParseUUIDPipe) productModelId: string,
+  @Get('eligible')
+  async eligible(
+    @Query('amount') amount: number,
+    @Query('date') date?: string, // yyyy‑mm‑dd optional
   ): Promise<LoanOffer[]> {
-    return this.loanOffersService.findByProductModel(productModelId);
+    return this.loanOffersService.findEligible(
+      Number(amount),
+      date ? new Date(date) : undefined,
+    );
   }
 
   @Post()
