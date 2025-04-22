@@ -1,0 +1,29 @@
+### 1. Simulate KYC (SUCCESS)
+POST http://localhost:8000/kyc-check/simulate
+Content-Type: application/json
+
+{
+  "passportUrl": "https://cdn.example.com/docs/passport-1234.jpg",
+  "aadharUrl":   "https://cdn.example.com/docs/aadhar-5678.jpg",
+  "scenario":    "SUCCESS"
+}
+
+### 2. Simulate KYC (PARTIAL – unclear docs)
+POST http://localhost:8000/kyc-check/simulate
+Content-Type: application/json
+
+{
+  "passportUrl": "https://cdn.example.com/docs/passport-blurry.jpg",
+  "aadharUrl":   "https://cdn.example.com/docs/aadhar-5678.jpg",
+  "scenario":    "PARTIAL"
+}
+
+### 3. Simulate KYC (FAILURE – mismatch)
+POST http://localhost:8000/kyc-check/simulate
+Content-Type: application/json
+
+{
+  "passportUrl": "https://cdn.example.com/docs/passport-invalid.jpg",
+  "aadharUrl":   "https://cdn.example.com/docs/aadhar-invalid.jpg",
+  "scenario":    "FAILURE"
+}

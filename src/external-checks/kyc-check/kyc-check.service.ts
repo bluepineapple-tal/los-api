@@ -1,208 +1,80 @@
+// src/external-checks/kyc-check/kyc-check.service.ts
 import { Injectable } from '@nestjs/common';
-import { KycCheckDto } from './dtos/kyc-check.dto';
-import { KycCheckResponse, Recc, RiskAssessment, Status, Verification } from './entity/kyc-check.entity';
 
+import { KycScenario, SimulateKycInput } from './dtos/create-kyc-check.dto';
+
+export interface KycMockResponse {
+  response_id: string;
+  request_id: string;
+  timestamp: string;
+  status: 'Completed';
+  identity_verification: 'Verified' | 'PartiallyVerified' | 'NotVerified';
+  document_verification: { passport: string; aadhar: string };
+  address_verification: 'Confirmed' | 'Unconfirmed';
+  risk_assessment: 'Low' | 'High';
+  recommendation: 'Approved' | 'Rejected';
+  comments: string;
+}
 
 @Injectable()
 export class KycCheckService {
+  simulate(input: SimulateKycInput): KycMockResponse {
+    const { scenario, passportUrl, aadharUrl } = input;
 
-    async initiate_check(kycCheckDto: KycCheckDto)
-    // :Promise<Boolean>{
-    : Promise<KycCheckResponse> {
-        try {
-            console.log(`[(service)KycCheckService.initiate_check].try: entry.\n`)
-            const responseBody = new KycCheckResponse();
-            let kycDto = kycCheckDto;
-            responseBody.response_id = crypto.randomUUID();
-            responseBody.request_id = kycCheckDto.request_id;
-            responseBody.timestamp = new Date().toISOString();
+    // helper for doc status
+    const docStatus = (url: string): string => {
+      if (!url) return 'NotProvided';
+      switch (scenario) {
+        case KycScenario.SUCCESS:
+          return 'Valid';
+        case KycScenario.PARTIAL:
+          return 'Unclear';
+        case KycScenario.FAILURE:
+          return 'Invalid';
+      }
+    };
 
-            // console.log(`Dto received: ${kycCheckDto}`)
-            //save and send the received DTO from request to the actual API.
+    // identity & other fields
+    const identity = (() => {
+      switch (scenario) {
+        case KycScenario.SUCCESS:
+          return 'Verified';
+        case KycScenario.PARTIAL:
+          return 'PartiallyVerified';
+        case KycScenario.FAILURE:
+          return 'NotVerified';
+      }
+    })();
 
-            let rand = Math.floor(Math.random() * 4)+1; // returns 1, 2, 3, or 4
-            console.log(`[(service)KycCheckService.initiate_check] random value generated = ${rand}.`)
-            let result = await this.scenarioSeperator(kycCheckDto, rand, responseBody)
-            console.log(`[(service)KycCheckService.initiate_check].try: exit.\n`)
-            return (result)
-        } catch (err) {
-            throw new Error(err)
-        }
-    }
+    const address =
+      scenario === KycScenario.SUCCESS ? 'Confirmed' : 'Unconfirmed';
+    const risk = scenario === KycScenario.SUCCESS ? 'Low' : 'High';
+    const rec = scenario === KycScenario.SUCCESS ? 'Approved' : 'Rejected';
+    const comments = (() => {
+      switch (scenario) {
+        case KycScenario.SUCCESS:
+          return 'All provided information is valid.';
+        case KycScenario.PARTIAL:
+          return 'Some documents are unclear; manual review needed.';
+        case KycScenario.FAILURE:
+          return 'Information mismatch with government records.';
+      }
+    })();
 
-    scenarioSeperator = (kycCheckBody: KycCheckDto, val: number, responseBody: KycCheckResponse) => {
-
-        switch (val) {
-            case 1: //Scenario 1: Fully Verified Customer 
-                {   
-                    console.log('[(service)KycCheckService.scenarioSeperator] case 1: Fully Verified Customer')
-                    return this.generateScenario1(kycCheckBody, responseBody)
-                }
-            case 2: //Scenario 2: Missing or Invalid Document 
-                {
-                    console.log('[(service)KycCheckService.scenarioSeperator] case 2: Missing or Invalid Document')
-                    return this.generateScenario2(kycCheckBody, responseBody)
-                }
-            case 3: //Scenario 3: High-Risk Customer 
-                {
-                    console.log('[(service)KycCheckService.scenarioSeperator] case 3: High-Risk Customer')
-                    return this.generateScenario3(kycCheckBody, responseBody)
-                }
-            case 4: //Scenario 4: KYC System Failure 
-                {
-                    console.log('[(service)KycCheckService.scenarioSeperator] case 4: KYC System Failure')
-                    return this.generateScenario4(kycCheckBody, responseBody)
-                } default: //Scenario 4: KYC System Failure 
-                {
-                    console.log('[(service)KycCheckService.scenarioSeperator] case default: Unknown error')
-                    return this.generateScenario_unknown(kycCheckBody, responseBody)
-                }
-        }
-    }
-
-    /**
-     * 
-     * Scenario 1: Fully Verified Customer 
-     * Identity Verification: Verified 
-     * Document Verification: All documents valid 
-     * Address Verification: Confirmed 
-     * Risk Assessment: Low 
-     * Recommendation: Approved 
-     * 
-     */
-    generateScenario1 = (kycCheckBody: KycCheckDto, responseBody: KycCheckResponse) => {
-        //------------set values for basic parameters----------------
-        responseBody.status = Status.COMPLETED;
-        responseBody.address_verification = Verification.CONFIRMED;
-        responseBody.risk_assessment = RiskAssessment.LOW;
-        responseBody.recommendation = Recc.APPROVED;
-        responseBody.comments = "All provided information is valid and meets compliance standards."
-        //------------------------------------------
-
-        //document + identity verification:
-        const result: Record<string, string> = {};
-        const idType = kycCheckBody.customer?.identification?.type;
-        if (idType) {
-            result[idType] = Verification.VERIFIED;
-        }
-
-        // Add each document type
-        const documents = kycCheckBody.customer?.documents || [];
-        if (Array.isArray(documents)) {
-            for (const doc of documents) {
-                if (doc.document_type) {
-                    result[doc.document_type] = Verification.VALID;
-                }
-            }
-        }
-        responseBody.document_verification = result;
-
-        return responseBody;
-    }
-
-
-    /**
-     * Scenario 2: Missing or Invalid Document 
-     * Identity Verification: Verified 
-     * Document Verification: Passport valid, utility bill invalid 
-     * Address Verification: Unconfirmed 
-     * Risk Assessment: Medium 
-     * Recommendation: Resubmit valid address proof 
-     * 
-     */
-    generateScenario2 = (kycCheckBody: KycCheckDto, responseBody: KycCheckResponse) => {
-        //------------set values for basic parameters----------------
-        responseBody.status = Status.COMPLETED;
-        responseBody.address_verification = Verification.UNCONFIRMED;
-        responseBody.risk_assessment = RiskAssessment.MEDIUM;
-        responseBody.recommendation = Recc.RESUBMIT;
-        responseBody.comments = "Please resubmit the documents again for KYC."
-        //------------------------------------------
-
-        //document + identity verification:
-        const result: Record<string, string> = {};
-        const idType = kycCheckBody.customer?.identification?.type;
-        if (idType) {
-            result[idType] = Verification.VERIFIED;
-        }
-
-        // Add each document type
-        const documents = kycCheckBody.customer?.documents || [];
-        if (Array.isArray(documents)) {
-            for (const doc of documents) {
-                if (doc.document_type) {
-                    result[doc.document_type] = Verification.INVALID;
-                }
-            }
-        }
-        responseBody.document_verification = result;
-
-        return responseBody;
-    }
-
-    /**
-     * 
-     * Scenario 3: High-Risk Customer 
-     * Identity Verification: Verified 
-     * Document Verification: Valid 
-     * Address Verification: Confirmed 
-     * Risk Assessment: High (Customer flagged in watchlists) 
-     * Recommendation: Manual review required 
-     * 
-     */
-    generateScenario3 = (kycCheckBody: KycCheckDto, responseBody: KycCheckResponse) => {
-        //------------set values for basic parameters----------------
-        responseBody.status = Status.COMPLETED;
-        responseBody.address_verification = Verification.CONFIRMED;
-        responseBody.risk_assessment = RiskAssessment.HIGH;
-        responseBody.recommendation = Recc.MANUAL;
-        responseBody.comments = "Customer flagged in watchlists."
-        //------------------------------------------
-
-        //document + identity verification:
-        const result: Record<string, string> = {};
-        const idType = kycCheckBody.customer?.identification?.type;
-        if (idType) {
-            result[idType] = Verification.VERIFIED;
-        }
-
-        // Add each document type
-        const documents = kycCheckBody.customer?.documents || [];
-        if (Array.isArray(documents)) {
-            for (const doc of documents) {
-                if (doc.document_type) {
-                    result[doc.document_type] = Verification.VALID;
-                }
-            }
-        }
-        responseBody.document_verification = result;
-
-        return responseBody;
-    }
-
-    /**
-     * 
-     * Scenario 3: KYC System Failure 
-     * Status: "Failed" 
-     * Reason: "Incomplete data or system error" 
-     * Recommendation: Retry with complete information or escalate to compliance team 
-     * 
-     */
-    generateScenario4 = (kycCheckBody: KycCheckDto, responseBody: KycCheckResponse) => {
-        //------------set values for basic parameters----------------
-        responseBody.status = Status.FAILED;
-        responseBody.recommendation = Recc.RETRY;
-        responseBody.comments = "Incomplete data or system error."
-        //------------------------------------------
-        return responseBody;
-    }
-
-    generateScenario_unknown = (kycCheckBody: KycCheckDto, responseBody: KycCheckResponse) => {
-        //------------set values for basic parameters----------------
-        responseBody.status = Status.UNKOWN;
-        responseBody.recommendation = Recc.RETRY;
-        responseBody.comments = "Unknown error occurred."
-        //------------------------------------------
-        return responseBody;
-    }
+    return {
+      response_id: `RES-${Date.now()}`,
+      request_id: `REQ-${Date.now()}`,
+      timestamp: new Date().toISOString(),
+      status: 'Completed',
+      identity_verification: identity,
+      document_verification: {
+        passport: docStatus(passportUrl),
+        aadhar: docStatus(aadharUrl),
+      },
+      address_verification: address,
+      risk_assessment: risk,
+      recommendation: rec,
+      comments,
+    };
+  }
 }
