@@ -9,7 +9,10 @@ import { ExternalChecksService } from './external-checks.service';
 import { CreditCheckModule } from './credit-check/credit-check.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([ExternalCheck, LoanApplication]), CreditCheckModule],
+  imports: [
+    TypeOrmModule.forFeature([ExternalCheck, LoanApplication]),
+    CreditCheckModule,
+  ],
   providers: [ExternalChecksService, ExternalChecksController],
   controllers: [ExternalChecksController],
   exports: [ExternalChecksService],

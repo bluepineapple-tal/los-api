@@ -1,5 +1,3 @@
-// src/external-checks/external-checks.service.ts
-
 import { LoanApplication } from 'src/loan-applications/loan-application.entity';
 import { Repository } from 'typeorm';
 
