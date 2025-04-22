@@ -1,7 +1,7 @@
 import { LoanOfferDTO } from 'src/loan-offers/dtos/loan-offer.dto';
 import { ProductCategoryDto } from 'src/products/product-categories/dtos/product-category.dto';
 import { ConsumerDTO } from 'src/users/dtos/consumer.dto';
-import { User } from 'src/users/user.entity';
+import { UserDTO } from 'src/users/dtos/user.dto';
 
 import {
   Field,
@@ -50,6 +50,6 @@ export class LoanApplicationDTO {
   @Field(() => ConsumerDTO, { nullable: true })
   consumer?: ConsumerDTO;
 
-  @Field(() => User, { nullable: true })
-  underwriter?: User;
+  @Field(() => UserDTO, { nullable: true })
+  underwriter?: UserDTO;
 }
