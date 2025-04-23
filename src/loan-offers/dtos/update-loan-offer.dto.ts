@@ -1,7 +1,7 @@
 import { Field, Float, InputType } from '@nestjs/graphql';
 import {
   IsBoolean,
-  IsDateString,
+  IsDate,
   IsNumber,
   IsOptional,
   IsUUID,
@@ -31,8 +31,8 @@ export class UpdateLoanOfferInput {
   @Min(0)
   max_amount?: number;
 
-  @Field({ nullable: true }) @IsOptional() @IsDateString() valid_from?: string;
-  @Field({ nullable: true }) @IsOptional() @IsDateString() valid_to?: string;
+  @Field({ nullable: true }) @IsOptional() @IsDate() valid_from?: Date;
+  @Field({ nullable: true }) @IsOptional() @IsDate() valid_to?: Date;
 
   @Field({ nullable: true }) @IsOptional() offer_name?: string;
   @Field({ nullable: true }) @IsOptional() offer_details?: string;
