@@ -1,11 +1,18 @@
-### Get credit check
+### Get credit score (REST)
 POST http://localhost:8000/credit-check/score
 Content-Type: application/json
 
 {
-  "income": 75000,
-  "creditHistory": "GOOD", 
+  "customer_name": "Atharva Sharma",
+  "gender": "MALE",
+  "PAN": "ABCDE1234F",
+  "aadhaar_number": "345678901234",
+  "monthly_income": 55000,
+  "marital_status": "MARRIED",
   "natureOfBusiness": "SALARIED",
-  "residenceType": "OWN",
-  "age": 31
+  "dob": "1993-04-15",
+  "phone_number": "9876543210",
+  "email_id": "atharva@example.com",
+  "address": "123 Galaxy Road, Pune",
+  "postcode": "411001"
 }

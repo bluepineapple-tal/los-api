@@ -1,98 +1,136 @@
+import { randomUUID } from 'node:crypto';
+
 import { Injectable } from '@nestjs/common';
+
 import {
-  CreditCheckDto,
-  CreditHistory,
+  MaritalStatus,
   NatureOfBusiness,
-  ResidenceType,
-} from './dtos/credit-check.dto';
+  ScoreBand,
+  ScoreProvider,
+} from './credit-check.enums';
+import { CreditCheckInput } from './dtos/credit-check.dto';
+import { CreditCheckResponse } from './dtos/credit-check.response';
 
 @Injectable()
 export class CreditCheckService {
-  calculateMockScore(creditCheckDto: CreditCheckDto): number {
-    let score = 300; // Base score
+  generateScore(input: CreditCheckInput): CreditCheckResponse {
+    const { monthly_income, marital_status, dob, natureOfBusiness } = input;
 
-    const { income, creditHistory, natureOfBusiness, residenceType, age } =
-      creditCheckDto;
+    const age = this.calculateAge(dob);
+    const incomePoints = this.mapIncomeToPoints(monthly_income);
+    const maritalPoints = this.mapMaritalStatusToPoints(marital_status);
+    const agePoints = this.mapAgeToPoints(age);
+    const businessPoints = this.mapBusinessToPoints(natureOfBusiness);
+    // const randomPoints = this.getRandomInt(50, 100);
 
-    // 1. Income-based weighting
-    //    We could also consider monthly debt / obligations to refine.
-    if (income < 20000) {
-      score += 20; // Low-income bracket
-    } else if (income < 50000) {
-      score += 60;
-    } else if (income < 100000) {
-      score += 100;
-    } else {
-      score += 150; // High-income bracket
+    const rawScore =
+      300 + incomePoints + maritalPoints + agePoints + businessPoints;
+    // randomPoints;
+
+    // Clamp 300-900
+    const credit_score = Math.min(Math.max(rawScore, 300), 900);
+    const score_band = this.getScoreBand(credit_score);
+
+    // Misc metrics
+    const active_accounts = this.getRandomInt(2, 5);
+    const closed_accounts = this.getRandomInt(0, 2);
+    const total_accounts = active_accounts + closed_accounts;
+    const credit_card_accounts = this.getRandomInt(1, 2);
+
+    const default_flag = monthly_income < 15000 ? this.getRandomBool() : false;
+    const npa_status = monthly_income < 10000 ? this.getRandomBool() : false;
+
+    return {
+      credit_score,
+      score_provider: this.randomScoreProvider(),
+      score_range_min: 300,
+      score_range_max: 900,
+      score_band,
+      total_accounts,
+      active_accounts,
+      closed_accounts,
+      credit_card_accounts,
+      default_flag,
+      npa_status,
+      request_id: randomUUID(),
+      timestamp: new Date().toISOString(),
+    };
+  }
+
+  // ---------- helpers ----------
+  private calculateAge(dobIso: string): number {
+    const dob = new Date(dobIso);
+    const diff = Date.now() - dob.getTime();
+    const ageDate = new Date(diff);
+    return Math.abs(ageDate.getUTCFullYear() - 1970);
+  }
+
+  private mapIncomeToPoints(income: number): number {
+    if (income >= 100_000) return 200;
+    if (income >= 75_000) return 170;
+    if (income >= 50_000) return 140;
+    if (income >= 30_000) return 100;
+    if (income >= 15_000) return 60;
+    return 30;
+  }
+
+  private mapMaritalStatusToPoints(status: MaritalStatus): number {
+    switch (status) {
+      case MaritalStatus.MARRIED:
+        return 100;
+      case MaritalStatus.SINGLE:
+        return 70;
+      case MaritalStatus.DIVORCED:
+      case MaritalStatus.WIDOWED:
+        return 50;
+      default:
+        return 30;
     }
+  }
 
-    // 2. Credit History weighting
-    switch (creditHistory) {
-      case CreditHistory.GOOD:
-        score += 250;
-        break;
-      case CreditHistory.FAIR:
-        score += 100;
-        break;
-      case CreditHistory.POOR:
-        score -= 50;
-        break;
-    }
+  private mapAgeToPoints(age: number): number {
+    if (age >= 25 && age <= 45) return 100;
+    if (age >= 18 && age <= 24) return 70;
+    if (age >= 46 && age <= 60) return 80;
+    if (age >= 61 && age <= 70) return 50;
+    return 30;
+  }
 
-    // 3. Nature of Business weighting
-    switch (natureOfBusiness) {
+  private mapBusinessToPoints(nature: NatureOfBusiness): number {
+    switch (nature) {
       case NatureOfBusiness.SALARIED:
-        score += 80;
-        break;
+        return 100;
       case NatureOfBusiness.SELF_EMPLOYED:
-        score += 40;
-        break;
+        return 80;
+      case NatureOfBusiness.BUSINESS:
+        return 70;
       case NatureOfBusiness.FREELANCER:
-        score += 30;
-        break;
+        return 60;
       case NatureOfBusiness.UNEMPLOYED:
-        score -= 20;
-        break;
+        return 20;
+      default:
+        return 30;
     }
+  }
 
-    // 4. Residence Type weighting
-    switch (residenceType) {
-      case ResidenceType.OWN:
-        score += 30;
-        break;
-      case ResidenceType.RENTED:
-        score += 10;
-        break;
-    }
+  private getScoreBand(score: number): ScoreBand {
+    if (score >= 800) return ScoreBand.EXCELLENT;
+    if (score >= 740) return ScoreBand.VERY_GOOD;
+    if (score >= 670) return ScoreBand.GOOD;
+    if (score >= 580) return ScoreBand.FAIR;
+    return ScoreBand.POOR;
+  }
 
-    // 5. Age-based weighting
-    if (age < 25) {
-      score += 15;
-    } else if (age <= 35) {
-      score += 25;
-    } else if (age <= 50) {
-      score += 15;
-    } else {
-      score -= 10;
-    }
+  private randomScoreProvider(): ScoreProvider {
+    const providers = Object.values(ScoreProvider);
+    return providers[this.getRandomInt(0, providers.length - 1)];
+  }
 
-    // 6. Optional: Additional constraints or custom logic
-    //    e.g., if user is self-employed and has poor credit history, reduce further, etc.
-    if (
-      natureOfBusiness === NatureOfBusiness.SELF_EMPLOYED &&
-      creditHistory === CreditHistory.POOR
-    ) {
-      score -= 30;
-    }
+  private getRandomInt(min: number, max: number): number {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
 
-    // Ensure final score remains in typical 300–900 range
-    if (score < 300) {
-      score = 300;
-    }
-    if (score > 900) {
-      score = 900;
-    }
-
-    return score;
+  private getRandomBool(): boolean {
+    return Math.random() < 0.5;
   }
 }

@@ -1,39 +1,85 @@
-import { IsNumber, IsEnum, Max, Min } from 'class-validator';
+import {
+  IsDateString,
+  IsEmail,
+  IsEnum,
+  IsInt,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  Matches,
+  Min,
+} from 'class-validator';
 
-export enum CreditHistory {
-  GOOD = 'GOOD',
-  FAIR = 'FAIR',
-  POOR = 'POOR',
-}
+import { Field, InputType, Int } from '@nestjs/graphql';
 
-export enum NatureOfBusiness {
-  SALARIED = 'SALARIED',
-  SELF_EMPLOYED = 'SELF_EMPLOYED',
-  FREELANCER = 'FREELANCER',
-  UNEMPLOYED = 'UNEMPLOYED',
-}
+import { Gender, MaritalStatus, NatureOfBusiness } from '../credit-check.enums';
 
-export enum ResidenceType {
-  RENTED = 'RENTED',
-  OWN = 'OWN',
-}
+const PAN_REGEX = /^[A-Z]{5}[0-9]{4}[A-Z]$/;
+const AADHAAR_REGEX = /^[2-9]{1}[0-9]{11}$/;
+const PHONE_REGEX = /^[0-9]{10}$/;
+const PIN_REGEX = /^[0-9]{6}$/;
 
-export class CreditCheckDto {
-  @IsNumber()
+@InputType()
+export class CreditCheckInput {
+  // Mandatory fields
+  @Field()
+  @IsString()
+  @IsNotEmpty()
+  customer_name: string;
+
+  @Field(() => Gender)
+  @IsEnum(Gender)
+  gender: Gender;
+
+  @Field()
+  @Matches(PAN_REGEX, {
+    message:
+      'PAN must be 10 characters (AAAAA9999A) with uppercase letters and digits',
+  })
+  PAN: string;
+
+  @Field()
+  @Matches(AADHAAR_REGEX, {
+    message: 'Aadhaar must be 12 digits starting with 2-9',
+  })
+  aadhaar_number: string;
+
+  @Field(() => Int)
+  @IsInt()
   @Min(0)
-  income: number;
+  monthly_income: number;
 
-  @IsEnum(CreditHistory)
-  creditHistory: CreditHistory;
+  @Field(() => MaritalStatus)
+  @IsEnum(MaritalStatus)
+  marital_status: MaritalStatus;
 
+  @Field(() => NatureOfBusiness)
   @IsEnum(NatureOfBusiness)
   natureOfBusiness: NatureOfBusiness;
 
-  @IsEnum(ResidenceType)
-  residenceType: ResidenceType;
+  @Field() // ISO-8601 date string
+  @IsDateString()
+  dob: string;
 
-  @IsNumber()
-  @Min(18)
-  @Max(100)
-  age: number;
+  @Field()
+  @Matches(PHONE_REGEX, { message: 'Phone number must be 10 digits' })
+  phone_number: string;
+
+  @Field()
+  @IsEmail()
+  email_id: string;
+
+  @Field()
+  @IsString()
+  address: string;
+
+  @Field()
+  @Matches(PIN_REGEX, { message: 'Postcode must be 6 digits' })
+  postcode: string;
+
+  // Optional extras (kept for future use)
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  nature_of_residence?: string;
 }
