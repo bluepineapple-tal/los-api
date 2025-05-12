@@ -9,12 +9,14 @@ import { ExternalChecksController } from './external-checks.controller';
 import { ExternalChecksResolver } from './external-checks.resolver';
 import { ExternalChecksService } from './external-checks.service';
 import { KycCheckModule } from './kyc-check/kyc-check.module';
+import { AmlCheckModule } from './aml-check/aml-check.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([ExternalCheck, LoanApplication]),
     CreditCheckModule,
     KycCheckModule,
+    AmlCheckModule,
   ],
   providers: [ExternalChecksService, ExternalChecksResolver],
   controllers: [ExternalChecksController],
