@@ -14,7 +14,7 @@ export enum RiskCategory {
 export enum ActionRequired {
   APPROVE = 'APPROVE',
   REJECT = 'REJECT',
-  REVIEW_REUIRED = 'REVIEW_REUIRED',
+  REVIEW_REQUIRED = 'REVIEW_REQUIRED',
 }
 
 export enum SanctionListMatch {
