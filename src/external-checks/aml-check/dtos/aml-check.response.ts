@@ -12,14 +12,17 @@ export class AmlCheckResponse {
   @Field(() => Status)
   status: Status;
 
+  @Field()
+  customer_name: string;
+
   @Field(() => Int)
   risk_score: number;
 
   @Field()
   match_found: boolean;
 
-  @Field(() => null)
-  match_details: null;
+  @Field(() => String, { nullable: true })
+  match_details: string | null;
 
   @Field(() => SanctionListMatch)
   sanctions_list_match: SanctionListMatch;

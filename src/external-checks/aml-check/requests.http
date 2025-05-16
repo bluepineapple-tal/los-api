@@ -1,11 +1,11 @@
-### Get credit score (REST)
+### Get AML response (REST)
 POST http://localhost:8000/aml-check
 Content-Type: application/json
 
 {
-  "customer_name": "NJ",
+  "customer_name": "XX",
   "dob": "1993-04-15",
-  "PAN": "ABCDE1234F",
+  "PAN": "FRDAL1234A",
   "aadhaar_number": "345678901234",
   "monthly_income": 55000,
   "marital_status": "MARRIED",
