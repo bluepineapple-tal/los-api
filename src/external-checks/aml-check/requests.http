@@ -1,0 +1,18 @@
+### Get AML response (REST)
+POST http://localhost:8000/aml-check
+Content-Type: application/json
+
+{
+  "customer_name": "XX",
+  "dob": "1993-04-15",
+  "PAN": "FRDAL1234A",
+  "aadhaar_number": "345678901234",
+  "monthly_income": 55000,
+  "marital_status": "MARRIED",
+  "nationality": "India",
+  "phone_number": "9876543210",
+  "email_id": "atharva@example.com",
+  "address": "123 Galaxy Road, Pune",
+  "postcode": "411001",
+  "currency": "INR"
+}
