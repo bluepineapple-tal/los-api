@@ -20,10 +20,7 @@ export class AmlCheckService {
     const { PAN, customer_name } = input;
     const rules: [() => boolean, () => Partial<AmlCheckResponse>][] = [
       [
-        () => {
-          console.log('PepPAN: ', PAN);
-          return this.pepPANs.has(PAN);
-        },
+        () => this.pepPANs.has(PAN),
         () => ({
           customer_name: customer_name,
           status: Status.SUCCESS,
@@ -43,11 +40,7 @@ export class AmlCheckService {
         }),
       ],
       [
-        () => {
-          console.log('FraudPAN: ', PAN);
-          console.log('this.fraudPANs: ', this.fraudPANs);
-          return this.fraudPANs.has(PAN);
-        },
+        () => this.fraudPANs.has(PAN),
         () => ({
           customer_name: customer_name,
           status: Status.SUCCESS,
@@ -88,12 +81,11 @@ export class AmlCheckService {
 
     // Find the first matching rule
     for (const [predicate, resultTemplate] of rules) {
-      console.log(predicate());
       if (predicate()) {
         return this.buildResponse(resultTemplate());
       }
-      return this.buildResponse({});
     }
+    return this.buildResponse({});
   }
   // Utility methods
   private getRandomInt([min, max]: [number, number]): number {
