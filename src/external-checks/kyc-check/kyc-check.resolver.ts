@@ -1,17 +1,15 @@
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
 
-import { SimulateKycInput } from './dtos/create-kyc-check.dto';
-import { KycCheckService, KycMockResponse } from './kyc-check.service';
+import { KycCheckInput } from './dtos/kyc-check.dto';
+import { KycCheckResponse } from './dtos/kyc-check.response';
+import { KycCheckService } from './kyc-check.service';
 
 @Resolver()
 export class KycCheckResolver {
-  constructor(private readonly svc: KycCheckService) {}
+  constructor(private readonly service: KycCheckService) {}
 
-  @Mutation(() => String, { name: 'runKycCheck' })
-  async runKycCheck(
-    @Args('input') input: SimulateKycInput,
-  ): Promise<KycMockResponse> {
-    const res = this.svc.simulate(input);
-    return res;
+  @Mutation(() => KycCheckResponse, { name: 'kycCheck' })
+  kycCheck(@Args('input') input: KycCheckInput): KycCheckResponse {
+    return this.service.verify(input);
   }
 }

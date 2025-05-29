@@ -1,15 +1,15 @@
-// src/external-checks/kyc-check/kyc-check.controller.ts
 import { Body, Controller, Post } from '@nestjs/common';
 
-import { SimulateKycInput } from './dtos/create-kyc-check.dto';
+import { KycCheckInput } from './dtos/kyc-check.dto';
+import { KycCheckResponse } from './dtos/kyc-check.response';
 import { KycCheckService } from './kyc-check.service';
 
 @Controller('kyc-check')
 export class KycCheckController {
-  constructor(private readonly svc: KycCheckService) {}
+  constructor(private readonly service: KycCheckService) {}
 
-  @Post('simulate')
-  simulate(@Body() dto: SimulateKycInput) {
-    return this.svc.simulate(dto);
+  @Post('verify')
+  verify(@Body() body: KycCheckInput): KycCheckResponse {
+    return this.service.verify(body);
   }
 }

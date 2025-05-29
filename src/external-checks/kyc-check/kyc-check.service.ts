@@ -1,80 +1,59 @@
-// src/external-checks/kyc-check/kyc-check.service.ts
+import { randomUUID } from 'node:crypto';
+
 import { Injectable } from '@nestjs/common';
 
-import { KycScenario, SimulateKycInput } from './dtos/create-kyc-check.dto';
-
-export interface KycMockResponse {
-  response_id: string;
-  request_id: string;
-  timestamp: string;
-  status: 'Completed';
-  identity_verification: 'Verified' | 'PartiallyVerified' | 'NotVerified';
-  document_verification: { passport: string; aadhar: string };
-  address_verification: 'Confirmed' | 'Unconfirmed';
-  risk_assessment: 'Low' | 'High';
-  recommendation: 'Approved' | 'Rejected';
-  comments: string;
-}
+import { KycCheckInput } from './dtos/kyc-check.dto';
+import { KycCheckResponse } from './dtos/kyc-check.response';
+import { KycStatus, VerificationOutcome } from './kyc-check.enums';
 
 @Injectable()
 export class KycCheckService {
-  simulate(input: SimulateKycInput): KycMockResponse {
-    const { scenario, passportUrl, aadharUrl } = input;
+  /** Aadhaar numbers driving deterministic outcomes  */
+  private readonly partialAadhaars = new Set(['222222222222', '333333333333']);
+  private readonly failedAadhaars = new Set(['444444444444', '555555555555']);
 
-    // helper for doc status
-    const docStatus = (url: string): string => {
-      if (!url) return 'NotProvided';
-      switch (scenario) {
-        case KycScenario.SUCCESS:
-          return 'Valid';
-        case KycScenario.PARTIAL:
-          return 'Unclear';
-        case KycScenario.FAILURE:
-          return 'Invalid';
-      }
-    };
+  verify(input: KycCheckInput): KycCheckResponse {
+    const { aadhaar_number } = input;
 
-    // identity & other fields
-    const identity = (() => {
-      switch (scenario) {
-        case KycScenario.SUCCESS:
-          return 'Verified';
-        case KycScenario.PARTIAL:
-          return 'PartiallyVerified';
-        case KycScenario.FAILURE:
-          return 'NotVerified';
-      }
-    })();
+    // ------------- FAILED -----------------
+    if (this.failedAadhaars.has(aadhaar_number)) {
+      return this.buildResponse({
+        status: KycStatus.FAILED,
+        verification_status: VerificationOutcome.NO_MATCH,
+        message: 'Provided details do not match government records.',
+        fields_incorrect: ['aadhaar_number', 'PAN'],
+      });
+    }
 
-    const address =
-      scenario === KycScenario.SUCCESS ? 'Confirmed' : 'Unconfirmed';
-    const risk = scenario === KycScenario.SUCCESS ? 'Low' : 'High';
-    const rec = scenario === KycScenario.SUCCESS ? 'Approved' : 'Rejected';
-    const comments = (() => {
-      switch (scenario) {
-        case KycScenario.SUCCESS:
-          return 'All provided information is valid.';
-        case KycScenario.PARTIAL:
-          return 'Some documents are unclear; manual review needed.';
-        case KycScenario.FAILURE:
-          return 'Information mismatch with government records.';
-      }
-    })();
+    // ------------- PARTIAL ----------------
+    if (this.partialAadhaars.has(aadhaar_number)) {
+      return this.buildResponse({
+        status: KycStatus.PARTIAL,
+        verification_status: VerificationOutcome.DOCUMENTS_NOT_CLEAR,
+        message: 'Document images are unclear. Please re-upload.',
+        fields_incorrect: ['aadhar_document', 'pan_document'],
+      });
+    }
 
+    // ------------- SUCCESS ---------------
+    return this.buildResponse({
+      status: KycStatus.SUCCESS,
+      verification_status: VerificationOutcome.VERIFIED,
+      message: 'KYC verification successful.',
+    });
+  }
+
+  // ---------- helpers ----------
+  private buildResponse(
+    overrides: Partial<KycCheckResponse>,
+  ): KycCheckResponse {
     return {
-      response_id: `RES-${Date.now()}`,
-      request_id: `REQ-${Date.now()}`,
+      status: overrides.status,
+      verification_status: overrides.verification_status,
+      message: overrides.message,
+      fields_incorrect: overrides.fields_incorrect,
+      request_id: randomUUID(),
       timestamp: new Date().toISOString(),
-      status: 'Completed',
-      identity_verification: identity,
-      document_verification: {
-        passport: docStatus(passportUrl),
-        aadhar: docStatus(aadharUrl),
-      },
-      address_verification: address,
-      risk_assessment: risk,
-      recommendation: rec,
-      comments,
     };
   }
 }

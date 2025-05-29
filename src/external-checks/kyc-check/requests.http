@@ -1,29 +1,44 @@
-### 1. Simulate KYC (SUCCESS)
-POST http://localhost:8000/kyc-check/simulate
+### SUCCESS case
+POST http://localhost:8000/kyc-check/verify
 Content-Type: application/json
 
 {
-  "passportUrl": "https://cdn.example.com/docs/passport-1234.jpg",
-  "aadharUrl":   "https://cdn.example.com/docs/aadhar-5678.jpg",
-  "scenario":    "SUCCESS"
+  "first_name": "John",
+  "last_name": "Doe",
+  "address": "123 Galaxy Road, Pune",
+  "dob": "1993-04-15",
+  "aadhaar_number": "111111111111",
+  "PAN": "ABCDE1234F",
+  "aadhar_document": "base64string_aadhar",
+  "pan_document": "base64string_pan"
 }
 
-### 2. Simulate KYC (PARTIAL – unclear docs)
-POST http://localhost:8000/kyc-check/simulate
+### PARTIAL (documents unclear)
+POST http://localhost:8000/kyc-check/verify
 Content-Type: application/json
 
 {
-  "passportUrl": "https://cdn.example.com/docs/passport-blurry.jpg",
-  "aadharUrl":   "https://cdn.example.com/docs/aadhar-5678.jpg",
-  "scenario":    "PARTIAL"
+  "first_name": "John",
+  "last_name": "Doe",
+  "address": "123 Galaxy Road, Pune",
+  "dob": "1993-04-15",
+  "aadhaar_number": "222222222222",
+  "PAN": "ABCDE1234F",
+  "aadhar_document": "blurry_image",
+  "pan_document": "blurry_image"
 }
 
-### 3. Simulate KYC (FAILURE – mismatch)
-POST http://localhost:8000/kyc-check/simulate
+### FAILED (details don’t match)
+POST http://localhost:8000/kyc-check/verify
 Content-Type: application/json
 
 {
-  "passportUrl": "https://cdn.example.com/docs/passport-invalid.jpg",
-  "aadharUrl":   "https://cdn.example.com/docs/aadhar-invalid.jpg",
-  "scenario":    "FAILURE"
+  "first_name": "John",
+  "last_name": "Doe",
+  "address": "123 Galaxy Road, Pune",
+  "dob": "1993-04-15",
+  "aadhaar_number": "444444444444",
+  "PAN": "ABCDE1234F",
+  "aadhar_document": "base64string_aadhar",
+  "pan_document": "base64string_pan"
 }
