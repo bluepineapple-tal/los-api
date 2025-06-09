@@ -38,38 +38,48 @@ export class SuperTokensConfigService {
 
 export const SUPERTOKENS_RECIPE_LIST = [
   EmailPassword.init({
+    signUpFeature: {
+      formFields: [
+        {
+          id: 'name',
+          validate: async (value: string) =>
+            value.trim().length >= 3 ? undefined : 'Name is too short',
+        },
+        {
+          id: 'avatar',
+          optional: true,
+          validate: async (value: string) =>
+            value === '' || /^https?:\/\//.test(value)
+              ? undefined
+              : 'Enter a valid URL',
+        },
+      ],
+    },
     override: {
       apis: (original) =>
         ({
           ...original,
           signUpPOST: async (input) => {
-            // First let the core do its normal work
-            const response = await original.signUpPOST(input);
+            const res = await original.signUpPOST(input);
 
-            if (response.status === 'OK') {
-              // 1. Pull the extra fields
+            if (res.status === 'OK') {
               const name = input.formFields.find((f) => f.id === 'name')
-                ?.value as string;
-              const avatar = input.formFields.find((f) => f.id === 'avatar')
-                ?.value as string;
+                .value as string;
+              const avatar =
+                (input.formFields.find((f) => f.id === 'avatar')
+                  ?.value as string) ?? '';
 
-              // 2. Persist them in UserMetadata
-              await UserMetadata.updateUserMetadata(response.user.id, {
+              // Persist extra data
+              await UserMetadata.updateUserMetadata(res.user.id, {
                 name,
                 avatar,
               });
 
-              // 3. OPTIONAL – push them into the access-token payload
-              //    so the frontend can read them without another API call:
-              const session = await Session.getSessionWithoutRequestResponse(
-                response.user.id,
-              );
-              await session.mergeIntoAccessTokenPayload({
-                name,
-                avatar,
-              });
+              // Push it into the brand-new session’s access token
+              await res.session.mergeIntoAccessTokenPayload({ name, avatar });
             }
-            return response;
+
+            return res;
           },
         }) satisfies APIInterface,
     },
