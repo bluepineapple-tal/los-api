@@ -75,8 +75,15 @@ export const SUPERTOKENS_RECIPE_LIST = [
                 avatar,
               });
 
+              // Assign default role
+              await UserRoles.addRoleToUser('public', res.user.id, 'consumer');
+
               // Push it into the brand-new session’s access token
-              await res.session.mergeIntoAccessTokenPayload({ name, avatar });
+              await res.session.mergeIntoAccessTokenPayload({
+                name,
+                avatar,
+                roles: ['consumer'],
+              });
             }
 
             return res;
