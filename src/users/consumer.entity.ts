@@ -43,8 +43,12 @@ export class ConsumerDetails {
   alt_phone?: string;
 
   /* address as embeddable */
-  @Column(() => Address)
-  address: Address;
+  @Column() street1: string;
+  @Column({ nullable: true }) street2?: string;
+  @Column() city: string;
+  @Column() state: string;
+  @Column() pin_code: string;
+  @Column({ default: 'India' }) country: string;
 
   @Column('decimal', { precision: 12, scale: 2, nullable: true })
   monthly_income?: number;
