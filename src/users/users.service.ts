@@ -1,5 +1,5 @@
-import { Consumer } from 'src/users/consumer.entity';
-import { Vendor } from 'src/users/vendor.entity';
+import { ConsumerDetails } from 'src/users/consumer.entity';
+import { VendorDetails } from 'src/users/vendor.entity';
 import { Repository } from 'typeorm';
 
 import { Injectable, NotFoundException } from '@nestjs/common';
@@ -7,35 +7,35 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UpdateUserDto } from './dtos/update-user-dto';
-import { User, UserRole } from './user.entity';
+import { User } from './user.entity';
+import { UserRole } from './user.enums';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
+    private readonly userRepo: Repository<User>,
 
-    @InjectRepository(Vendor)
-    private readonly vendorRepository: Repository<Vendor>,
+    @InjectRepository(VendorDetails)
+    private readonly vendorRepo: Repository<VendorDetails>,
 
-    @InjectRepository(Consumer)
-    private readonly consumerRepository: Repository<Consumer>,
+    @InjectRepository(ConsumerDetails)
+    private readonly consumerRepo: Repository<ConsumerDetails>,
   ) {}
 
   async findAll(): Promise<User[]> {
-    return this.userRepository.find({
-      relations: ['vendor', 'consumer'], // if we want to load profiles
+    return this.userRepo.find({
+      relations: ['vendorProfile', 'consumerProfile'],
     });
   }
 
   async findOne(id: string): Promise<User> {
-    const user = await this.userRepository.findOne({
+    const user = await this.userRepo.findOne({
       where: { id },
-      relations: ['vendor', 'consumer'],
+      relations: ['vendorProfile', 'consumerProfile'],
     });
-    if (!user) {
-      throw new NotFoundException(`User with ID "${id}" not found`);
-    }
+
+    if (!user) throw new NotFoundException(`User "${id}" not found`);
     return user;
   }
 
@@ -43,98 +43,70 @@ export class UsersService {
    * Create a new user. If role is vendor, create a Vendor profile;
    * if role is consumer, create a Consumer profile.
    */
-  async create(createUserDto: CreateUserDto): Promise<User> {
+  async create(dto: CreateUserDto): Promise<User> {
     const {
       email,
-      password,
-      role,
-      business_name,
-      address,
       phone,
       first_name,
       last_name,
-    } = createUserDto;
+      role = UserRole.CONSUMER,
+      supertokensUserId,
+      /* vendor-specific */
+      business_name,
+      address,
+      /* consumer-specific (optional) */
+      ...consumerExtras
+    } = dto;
 
-    // Create the user record
-    const user = this.userRepository.create({
+    /* 1. base user ---------------------------------------------------- */
+    const user = this.userRepo.create({
       email,
-      password_hash: password, // TODO: hash the password
+      phone,
+      first_name,
+      last_name,
       role,
+      supertokensUserId,
     });
 
     // Save the new user
-    const savedUser = await this.userRepository.save(user);
+    const savedUser = await this.userRepo.save(user);
 
-    // If vendor, create a vendor profile
-    if (role === UserRole.VENDOR && business_name) {
-      const vendor = this.vendorRepository.create({
+    /* 2. optional vendor profile ------------------------------------- */
+    if (role === UserRole.VENDOR) {
+      const vendor = this.vendorRepo.create({
         user: savedUser,
         business_name,
         address,
-        phone,
       });
-      await this.vendorRepository.save(vendor);
+      await this.vendorRepo.save(vendor);
     }
 
-    // If consumer, create a consumer profile
-    if (role === UserRole.CONSUMER && first_name) {
-      const consumer = this.consumerRepository.create({
+    /* 3. optional consumer profile ----------------------------------- */
+    if (role === UserRole.CONSUMER) {
+      const consumer = this.consumerRepo.create({
         user: savedUser,
-        first_name,
-        last_name,
-        phone,
+        ...consumerExtras, // date_of_birth, gender, etc.
       });
-      await this.consumerRepository.save(consumer);
+      await this.consumerRepo.save(consumer);
     }
 
-    return this.findOne(savedUser.id); // return user with relations loaded
+    return this.findOne(savedUser.id);
   }
 
-  async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
+  async update(id: string, dto: UpdateUserDto): Promise<User> {
     const user = await this.findOne(id);
 
-    // If email is present, update it
-    if (updateUserDto.email) {
-      user.email = updateUserDto.email;
-    }
+    this.applyUserCoreUpdates(user, dto);
+    await this.userRepo.save(user);
 
-    // If password is present, update it
-    if (updateUserDto.password) {
-      user.password_hash = updateUserDto.password; // normally hashed
-    }
-
-    // If you allow updating role, handle that here
-    if (updateUserDto.role) {
-      user.role = updateUserDto.role;
-    }
-
-    await this.userRepository.save(user);
-
-    // Update vendor profile if this user is or became a vendor
-    if (user.role === UserRole.VENDOR) {
-      const vendor = await this.vendorRepository.findOne({
-        where: { user: { id } },
-      });
-      if (vendor) {
-        vendor.business_name =
-          updateUserDto.business_name ?? vendor.business_name;
-        vendor.address = updateUserDto.address ?? vendor.address;
-        vendor.phone = updateUserDto.phone ?? vendor.phone;
-        await this.vendorRepository.save(vendor);
-      }
-    }
-
-    // Update consumer profile if this user is or became a consumer
-    if (user.role === UserRole.CONSUMER) {
-      const consumer = await this.consumerRepository.findOne({
-        where: { user: { id } },
-      });
-      if (consumer) {
-        consumer.first_name = updateUserDto.first_name ?? consumer.first_name;
-        consumer.last_name = updateUserDto.last_name ?? consumer.last_name;
-        consumer.phone = updateUserDto.phone ?? consumer.phone;
-        await this.consumerRepository.save(consumer);
-      }
+    switch (user.role) {
+      case UserRole.VENDOR:
+        await this.upsertVendor(user, dto);
+        break;
+      case UserRole.CONSUMER:
+        await this.upsertConsumer(user, dto);
+        break;
+      // NBFC / UNDERWRITER / ADMIN need no profile tables (yet)
     }
 
     return this.findOne(id);
@@ -142,7 +114,58 @@ export class UsersService {
 
   async remove(id: string): Promise<boolean> {
     const user = await this.findOne(id);
-    await this.userRepository.remove(user);
+    await this.userRepo.remove(user);
     return true;
+  }
+
+  /* ------------------------------------------------------------- */
+  /* helpers                                                       */
+  /* ------------------------------------------------------------- */
+  private applyUserCoreUpdates(user: User, dto: UpdateUserDto): void {
+    if (dto.email) user.email = dto.email;
+    if (dto.phone) user.phone = dto.phone;
+    if (dto.first_name) user.first_name = dto.first_name;
+    if (dto.last_name) user.last_name = dto.last_name;
+    if (dto.role) user.role = dto.role;
+  }
+
+  private async upsertVendor(user: User, dto: UpdateUserDto): Promise<void> {
+    const vendor =
+      (await this.vendorRepo.findOne({ where: { user: { id: user.id } } })) ??
+      this.vendorRepo.create({ user });
+
+    if (dto.business_name) vendor.business_name = dto.business_name;
+    if (dto.address) vendor.address = dto.address;
+
+    await this.vendorRepo.save(vendor);
+  }
+
+  private async upsertConsumer(user: User, dto: UpdateUserDto): Promise<void> {
+    const consumer =
+      (await this.consumerRepo.findOne({ where: { user: { id: user.id } } })) ??
+      this.consumerRepo.create({ user });
+
+    const setIf = <K extends keyof (ConsumerDetails | UpdateUserDto)>(
+      key: K,
+    ) => {
+      if (dto[key] !== undefined) (consumer[key] as any) = dto[key];
+    };
+
+    // apply only consumer-specific keys
+    (
+      [
+        'date_of_birth',
+        'gender',
+        'marital_status',
+        'alt_phone',
+        'address',
+        'monthly_income',
+        'source_of_income',
+        'aadhar_number',
+        'pan_number',
+      ] as const
+    ).forEach(setIf);
+
+    await this.consumerRepo.save(consumer);
   }
 }

@@ -6,13 +6,12 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
-  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 
 import { LoanOffer } from '../loan-offers/loan-offer.entity';
-import { Consumer } from '../users/consumer.entity';
+import { ConsumerDetails } from '../users/consumer.entity';
 
 export enum ApplicationStatus {
   DRAFT = 'draft',
@@ -28,14 +27,14 @@ export class LoanApplication {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => Consumer, { onDelete: 'CASCADE' })
-  consumer: Consumer;
+  @ManyToOne(() => ConsumerDetails, { onDelete: 'CASCADE' })
+  consumer: ConsumerDetails;
 
   /**
-   * One‑to‑one link to ProductCategory.
+   * Many‑to‑one link to ProductCategory.
    * Each application must pick exactly one category.
    */
-  @OneToOne(() => ProductCategory, { nullable: false, cascade: false })
+  @ManyToOne(() => ProductCategory, { nullable: false, cascade: false })
   @JoinColumn({ name: 'product_category_id' })
   productCategory: ProductCategory;
 

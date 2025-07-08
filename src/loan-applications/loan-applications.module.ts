@@ -3,8 +3,7 @@ import { LoanApplicationHistory } from 'src/loan-applications/loan-application-h
 import { LoanApplication } from 'src/loan-applications/loan-application.entity';
 import { LoanOffer } from 'src/loan-offers/loan-offer.entity';
 import { ProductCategory } from 'src/products/product-categories/product-category.entity';
-import { Consumer } from 'src/users/consumer.entity';
-import { User } from 'src/users/user.entity';
+import { ConsumerDetails } from 'src/users/consumer.entity';
 
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -18,17 +17,18 @@ import { LoanApplicationHistoryService } from './loan-application-history/loan-a
 import { LoanApplicationsController } from './loan-applications.controller';
 import { LoanApplicationsResolver } from './loan-applications.resolver';
 import { LoanApplicationsService } from './loan-applications.service';
+import { User } from 'src/users/user.entity';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
       LoanApplication,
-      Consumer,
+      ConsumerDetails,
       ProductCategory,
       LoanOffer,
-      User,
       ApplicationDocument,
       LoanApplicationHistory,
+      User,
     ]),
   ],
   providers: [

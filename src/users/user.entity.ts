@@ -11,34 +11,33 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { Consumer } from './consumer.entity';
-import { Vendor } from './vendor.entity';
-
-export enum UserRole {
-  VENDOR = 'vendor',
-  NBFC_PERSONNEL = 'nbfc_personnel',
-  UNDERWRITER = 'underwriter',
-  CONSUMER = 'consumer',
-  ADMIN = 'admin',
-}
-
-export enum UserStatus {
-  ACTIVE = 'active',
-  INACTIVE = 'inactive',
-  SUSPENDED = 'suspended',
-}
+import { ConsumerDetails } from './consumer.entity';
+import { VendorDetails } from './vendor.entity';
+import { UserRole, UserStatus } from './user.enums';
 
 @Entity()
 export class User {
+  /* ------------- identities ------------- */
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column({ unique: true })
+  supertokensUserId: string;
+
+  @Column({ unique: true })
   email: string;
 
+  /* ------------- common profile bits ------------- */
   @Column()
-  password_hash: string;
+  first_name: string;
 
+  @Column()
+  last_name: string;
+
+  @Column({ unique: true, nullable: true })
+  phone?: string;
+
+  /* ------------- role & status ------------- */
   @Column({
     type: 'enum',
     enum: UserRole,
@@ -53,21 +52,19 @@ export class User {
   })
   status: UserStatus;
 
+  /* ------------- housekeeping ------------- */
   @CreateDateColumn()
   created_at: Date;
 
   @UpdateDateColumn()
   updated_at: Date;
 
-  // -- OPTIONAL RELATIONSHIPS: If you want back references in the User entity.
+  /* ------------- optional role-specific one-to-ones ------------- */
+  @OneToOne(() => ConsumerDetails, (c) => c.user, { nullable: true })
+  consumerProfile?: ConsumerDetails;
 
-  // One user can have exactly one vendor profile
-  @OneToOne(() => Vendor, (vendor) => vendor.user, { nullable: true })
-  vendor?: Vendor;
-
-  // One user can have exactly one consumer profile
-  @OneToOne(() => Consumer, (consumer) => consumer.user, { nullable: true })
-  consumer?: Consumer;
+  @OneToOne(() => VendorDetails, (v) => v.user, { nullable: true })
+  vendorProfile?: VendorDetails;
 
   // If the user is an underwriter, they might be assigned multiple applications
   @OneToMany(() => LoanApplication, (app) => app.underwriter, {

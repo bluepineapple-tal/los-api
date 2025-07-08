@@ -11,11 +11,11 @@ import {
 import { User } from './user.entity';
 
 @Entity()
-export class Vendor {
+export class VendorDetails {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @OneToOne(() => User, (user) => user.vendor, { onDelete: 'CASCADE' })
+  @OneToOne(() => User, (user) => user.vendorProfile, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
   user: User;
 
@@ -24,9 +24,6 @@ export class Vendor {
 
   @Column()
   address: string;
-
-  @Column()
-  phone: string;
 
   @CreateDateColumn()
   created_at: Date;

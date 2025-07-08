@@ -7,7 +7,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { LoanOffer } from '../loan-offers/loan-offer.entity';
-import { Consumer } from '../users/consumer.entity';
+import { ConsumerDetails } from '../users/consumer.entity';
 import { User } from '../users/user.entity';
 import { CreateLoanApplicationDto } from './dtos/create-loan-application.dto';
 import { UpdateLoanApplicationDto } from './dtos/update-loan-application.dto';
@@ -19,8 +19,8 @@ export class LoanApplicationsService {
     @InjectRepository(LoanApplication)
     private readonly repo: Repository<LoanApplication>,
 
-    @InjectRepository(Consumer)
-    private readonly consumerRepo: Repository<Consumer>,
+    @InjectRepository(ConsumerDetails)
+    private readonly consumerRepo: Repository<ConsumerDetails>,
 
     @InjectRepository(ProductCategory)
     private readonly categoryRepo: Repository<ProductCategory>,

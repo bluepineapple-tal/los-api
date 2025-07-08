@@ -41,14 +41,13 @@ export class LoanApplicationDTO {
   updated_at: Date;
 
   @Field(() => LoanOfferDTO, { nullable: true })
-  loan_offer?: LoanOfferDTO;
+  selectedOffer?: LoanOfferDTO;
 
   @Field(() => ProductCategoryDto)
   productCategory: ProductCategoryDto;
 
-  // TODO: Once we have RBAC setup, make consumer field manadatory
-  @Field(() => ConsumerDTO, { nullable: true })
-  consumer?: ConsumerDTO;
+  @Field(() => ConsumerDTO)
+  consumer: ConsumerDTO;
 
   @Field(() => UserDTO, { nullable: true })
   underwriter?: UserDTO;

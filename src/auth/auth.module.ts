@@ -1,4 +1,5 @@
 import { SuperTokensConfigService } from 'src/config/supertokens.config';
+import { User } from 'src/users/user.entity';
 
 import {
   DynamicModule,
@@ -6,10 +7,11 @@ import {
   Module,
   NestModule,
 } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AuthMiddleware } from './auth.middleware';
 import { ConfigInjectionToken } from './config.interface';
+import { RecipeListProvider } from './supertokens/recipe-list.factory';
 import { SupertokensService } from './supertokens/supertokens.service';
 
 @Module({
@@ -33,10 +35,11 @@ export class AuthModule implements NestModule {
           },
           inject: [SuperTokensConfigService],
         },
+        RecipeListProvider,
         SupertokensService,
       ],
       exports: [],
-      imports: [ConfigModule],
+      imports: [TypeOrmModule.forFeature([User])],
       module: AuthModule,
     };
   }

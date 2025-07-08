@@ -1,19 +1,5 @@
 import { registerEnumType } from '@nestjs/graphql';
 
-export enum Gender {
-  MALE = 'MALE',
-  FEMALE = 'FEMALE',
-  OTHER = 'OTHER',
-}
-
-export enum MaritalStatus {
-  MARRIED = 'MARRIED',
-  SINGLE = 'SINGLE',
-  DIVORCED = 'DIVORCED',
-  WIDOWED = 'WIDOWED',
-  UNKNOWN = 'UNKNOWN',
-}
-
 export enum NatureOfBusiness {
   SALARIED = 'SALARIED',
   SELF_EMPLOYED = 'SELF_EMPLOYED',
@@ -37,8 +23,6 @@ export enum ScoreBand {
   EXCELLENT = 'EXCELLENT',
 }
 
-registerEnumType(Gender, { name: 'Gender' });
-registerEnumType(MaritalStatus, { name: 'MaritalStatus' });
 registerEnumType(NatureOfBusiness, { name: 'NatureOfBusiness' });
 registerEnumType(ScoreProvider, { name: 'ScoreProvider' });
 registerEnumType(ScoreBand, { name: 'ScoreBand' });

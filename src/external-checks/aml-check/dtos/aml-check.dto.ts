@@ -8,10 +8,10 @@ import {
 } from 'class-validator';
 import { Field, InputType } from '@nestjs/graphql';
 
-const PAN_REGEX = /^[A-Z]{5}[0-9]{4}[A-Z]$/;
-const AADHAAR_REGEX = /^[2-9]{1}[0-9]{11}$/;
-const PHONE_REGEX = /^[0-9]{10}$/;
-const PIN_REGEX = /^[0-9]{6}$/;
+const PAN_REGEX = /^[A-Z]{5}\d{4}[A-Z]$/;
+const AADHAAR_REGEX = /^[2-9]\d{11}$/;
+const PHONE_REGEX = /^\d{10}$/;
+const PIN_REGEX = /^\d{6}$/;
 
 @InputType()
 export class AmlCheckInput {
@@ -22,7 +22,7 @@ export class AmlCheckInput {
 
   @Field()
   @IsDateString()
-  dob: string;
+  date_of_birth: string;
 
   @Field()
   @IsString()

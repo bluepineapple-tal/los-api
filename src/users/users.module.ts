@@ -4,8 +4,8 @@ import { LoanApplication } from 'src/loan-applications/loan-application.entity';
 import { LoanOffer } from 'src/loan-offers/loan-offer.entity';
 
 import { ManualReview } from 'src/underwriting/manual-reviews/manual-review.entity';
-import { Consumer } from 'src/users/consumer.entity';
-import { Vendor } from 'src/users/vendor.entity';
+import { ConsumerDetails } from 'src/users/consumer.entity';
+import { VendorDetails } from 'src/users/vendor.entity';
 
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -13,22 +13,22 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { BlacklistController } from './blacklist/blacklist.controller';
 import { BlacklistResolver } from './blacklist/blacklist.resolver';
 import { BlacklistService } from './blacklist/blacklist.service';
-import { User } from './user.entity';
 import { UsersController } from './users.controller';
 import { UsersResolver } from './users.resolver';
 import { UsersService } from './users.service';
+import { User } from './user.entity';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
       Blacklist,
-      Consumer,
+      ConsumerDetails,
       LoanApplication,
       LoanApplicationHistory,
       LoanOffer,
       ManualReview,
       User,
-      Vendor,
+      VendorDetails,
     ]),
   ],
   providers: [BlacklistResolver, BlacklistService, UsersResolver, UsersService],

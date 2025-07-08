@@ -4,23 +4,24 @@ import { CreateUserInput } from './dtos/create-user.dto'; // GraphQL @InputType
 import { UpdateUserInput } from './dtos/update-user-dto'; // GraphQL @InputType
 import { UserDTO } from './dtos/user.dto'; // GraphQL @ObjectType
 import { UsersService } from './users.service';
+import { User } from './user.entity';
 
 @Resolver(() => UserDTO)
 export class UsersResolver {
   constructor(private readonly usersService: UsersService) {}
 
   @Query(() => [UserDTO], { name: 'users' })
-  async findAll(): Promise<UserDTO[]> {
+  async findAll(): Promise<User[]> {
     return this.usersService.findAll();
   }
 
   @Query(() => UserDTO, { name: 'user' })
-  async findOne(@Args('id', { type: () => ID }) id: string): Promise<UserDTO> {
+  async findOne(@Args('id', { type: () => ID }) id: string): Promise<User> {
     return this.usersService.findOne(id);
   }
 
   @Mutation(() => UserDTO)
-  async createUser(@Args('input') input: CreateUserInput): Promise<UserDTO> {
+  async createUser(@Args('input') input: CreateUserInput): Promise<User> {
     return this.usersService.create(input);
   }
 
@@ -28,7 +29,7 @@ export class UsersResolver {
   async updateUser(
     @Args('id', { type: () => ID }) id: string,
     @Args('input') input: UpdateUserInput,
-  ): Promise<UserDTO> {
+  ): Promise<User> {
     return this.usersService.update(id, input);
   }
 

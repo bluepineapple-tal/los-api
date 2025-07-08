@@ -1,45 +1,39 @@
-import { IsEmail, IsNotEmpty, IsOptional } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsOptional, IsUUID } from 'class-validator';
 
 import { Field, InputType } from '@nestjs/graphql';
 
-import { UserRole } from '../user.entity';
+import { UserRole } from '../user.enums';
 
 @InputType()
 export class CreateUserInput {
-  @Field()
-  @IsEmail()
-  email: string;
+  /* identities ------------------------------------------------------ */
+  @Field() @IsUUID() supertokensUserId: string;
 
-  @Field()
-  @IsNotEmpty()
-  password: string;
+  /* auth ------------------------------------------------------------ */
+  @Field() @IsEmail() email: string;
+  @Field({ nullable: true }) @IsOptional() password?: string;
 
+  /* core profile ---------------------------------------------------- */
+  @Field() @IsNotEmpty() first_name: string;
+  @Field() @IsNotEmpty() last_name: string;
+  @Field({ nullable: true }) @IsOptional() phone?: string;
+
+  /* role ------------------------------------------------------------ */
   @Field(() => String, { defaultValue: UserRole.CONSUMER })
-  role: UserRole;
+  role: UserRole = UserRole.CONSUMER;
 
-  // If the user is a VENDOR, we capture vendor fields
-  @Field({ nullable: true })
-  @IsOptional()
-  business_name?: string;
+  /* vendor-only ----------------------------------------------------- */
+  @Field({ nullable: true }) @IsOptional() business_name?: string;
+  @Field({ nullable: true }) @IsOptional() address?: string; // vendor HQ
+  @Field({ nullable: true }) @IsOptional() business_phone?: string;
 
-  @Field({ nullable: true })
-  @IsOptional()
-  address?: string;
+  /* consumer-only (optional on sign-up) ----------------------------- */
+  // These can be filled later in the onboarding form
 
-  @Field({ nullable: true })
-  @IsOptional()
-  phone?: string;
+  // TODO: User details will be captured after signup on the /onboarding page,
+  // make sure if consumer or vendor role completes this profile after logging in.
 
-  // If the user is a CONSUMER, we capture consumer fields
-  @Field({ nullable: true })
-  @IsOptional()
-  first_name?: string;
-
-  @Field({ nullable: true })
-  @IsOptional()
-  last_name?: string;
+  // User log in -> complete onboarding -> create loan application ->
 }
-
-// For REST usage, we can have a plain DTO class with the same fields:
 
 export class CreateUserDto extends CreateUserInput {}

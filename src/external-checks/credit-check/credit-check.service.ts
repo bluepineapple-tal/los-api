@@ -1,9 +1,9 @@
 import { randomUUID } from 'node:crypto';
+import { MaritalStatus } from 'src/users/user.enums';
 
 import { Injectable } from '@nestjs/common';
 
 import {
-  MaritalStatus,
   NatureOfBusiness,
   ScoreBand,
   ScoreProvider,
@@ -14,9 +14,10 @@ import { CreditCheckResponse } from './dtos/credit-check.response';
 @Injectable()
 export class CreditCheckService {
   generateScore(input: CreditCheckInput): CreditCheckResponse {
-    const { monthly_income, marital_status, dob, natureOfBusiness } = input;
+    const { monthly_income, marital_status, date_of_birth, natureOfBusiness } =
+      input;
 
-    const age = this.calculateAge(dob);
+    const age = this.calculateAge(date_of_birth);
     const incomePoints = this.mapIncomeToPoints(monthly_income);
     const maritalPoints = this.mapMaritalStatusToPoints(marital_status);
     const agePoints = this.mapAgeToPoints(age);
@@ -59,8 +60,8 @@ export class CreditCheckService {
 
   // ---------- helpers ----------
   private calculateAge(dobIso: string): number {
-    const dob = new Date(dobIso);
-    const diff = Date.now() - dob.getTime();
+    const date_of_birth = new Date(dobIso);
+    const diff = Date.now() - date_of_birth.getTime();
     const ageDate = new Date(diff);
     return Math.abs(ageDate.getUTCFullYear() - 1970);
   }

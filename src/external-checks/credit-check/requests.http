@@ -10,7 +10,7 @@ Content-Type: application/json
   "monthly_income": 55000,
   "marital_status": "MARRIED",
   "natureOfBusiness": "SALARIED",
-  "dob": "1993-04-15",
+  "date_of_birth": "1993-04-15",
   "phone_number": "9876543210",
   "email_id": "atharva@example.com",
   "address": "123 Galaxy Road, Pune",

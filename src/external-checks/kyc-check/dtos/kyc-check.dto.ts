@@ -11,7 +11,7 @@ export class KycCheckInput {
   @Field() @IsString() @IsNotEmpty() last_name: string;
   @Field() @IsString() @IsNotEmpty() address: string;
 
-  @Field() @IsDateString() dob: string;
+  @Field() @IsDateString() date_of_birth: string;
 
   @Field()
   @Matches(AADHAAR_REGEX, { message: 'Aadhaar must be 12 digits, start 2-9' })

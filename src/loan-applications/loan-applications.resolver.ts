@@ -4,27 +4,28 @@ import { CreateLoanApplicationInput } from './dtos/create-loan-application.dto';
 import { LoanApplicationDTO } from './dtos/loan-application.dto';
 import { UpdateLoanApplicationInput } from './dtos/update-loan-application.dto';
 import { LoanApplicationsService } from './loan-applications.service';
+import { LoanApplication } from './loan-application.entity';
 
 @Resolver(() => LoanApplicationDTO)
 export class LoanApplicationsResolver {
   constructor(private readonly service: LoanApplicationsService) {}
 
   @Query(() => [LoanApplicationDTO], { name: 'loanApplications' })
-  async findAll(): Promise<LoanApplicationDTO[]> {
+  async findAll(): Promise<LoanApplication[]> {
     return this.service.findAll();
   }
 
   @Query(() => LoanApplicationDTO, { name: 'loanApplication' })
   async findOne(
     @Args('id', { type: () => ID }) id: string,
-  ): Promise<LoanApplicationDTO> {
+  ): Promise<LoanApplication> {
     return this.service.findOne(id);
   }
 
   @Mutation(() => LoanApplicationDTO)
   async createLoanApplication(
     @Args('input') input: CreateLoanApplicationInput,
-  ): Promise<LoanApplicationDTO> {
+  ): Promise<LoanApplication> {
     return this.service.create(input);
   }
 
@@ -32,7 +33,7 @@ export class LoanApplicationsResolver {
   async updateLoanApplication(
     @Args('id', { type: () => ID }) id: string,
     @Args('input') input: UpdateLoanApplicationInput,
-  ): Promise<LoanApplicationDTO> {
+  ): Promise<LoanApplication> {
     return this.service.update(id, input);
   }
 
