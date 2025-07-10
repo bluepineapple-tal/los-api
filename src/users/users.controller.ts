@@ -28,6 +28,11 @@ export class UsersController {
     return this.usersService.findOne(id);
   }
 
+  @Get('st/:stId')
+  getBySuperTokensId(@Param('stId') stId: string): Promise<User> {
+    return this.usersService.findBySuperTokensId(stId);
+  }
+
   @Post()
   async create(@Body() createUserDto: CreateUserDto): Promise<User> {
     return this.usersService.create(createUserDto);

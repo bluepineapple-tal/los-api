@@ -20,6 +20,13 @@ export class UsersResolver {
     return this.usersService.findOne(id);
   }
 
+  @Query(() => UserDTO, { name: 'userBySuperTokensId' })
+  userBySuperTokensId(
+    @Args('stId', { type: () => String }) stId: string,
+  ): Promise<User> {
+    return this.usersService.findBySuperTokensId(stId);
+  }
+
   @Mutation(() => UserDTO)
   async createUser(@Args('input') input: CreateUserInput): Promise<User> {
     return this.usersService.create(input);

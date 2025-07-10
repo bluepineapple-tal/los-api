@@ -9,16 +9,7 @@ import {
 } from 'typeorm';
 
 import { User } from './user.entity';
-import { Gender, MaritalStatus, SourceOfIncome } from './user.enums';
-
-export class Address {
-  @Column() street1: string;
-  @Column({ nullable: true }) street2?: string;
-  @Column() city: string;
-  @Column() state: string;
-  @Column() pin_code: string;
-  @Column({ default: 'India' }) country: string;
-}
+import { Gender, MaritalStatus } from './user.enums';
 
 @Entity()
 export class ConsumerDetails {
@@ -49,12 +40,6 @@ export class ConsumerDetails {
   @Column() state: string;
   @Column() pin_code: string;
   @Column({ default: 'India' }) country: string;
-
-  @Column('decimal', { precision: 12, scale: 2, nullable: true })
-  monthly_income?: number;
-
-  @Column({ type: 'enum', enum: SourceOfIncome, nullable: true })
-  source_of_income?: SourceOfIncome;
 
   @Column({ unique: true, nullable: true })
   aadhar_number?: string;

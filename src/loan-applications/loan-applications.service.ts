@@ -68,6 +68,8 @@ export class LoanApplicationsService {
       requested_amount,
       status,
       underwriterId,
+      monthly_income,
+      source_of_income,
     } = dto;
 
     // consumer
@@ -115,6 +117,8 @@ export class LoanApplicationsService {
       status: status ?? ApplicationStatus.DRAFT,
       underwriter,
       manual_review_needed: false,
+      monthly_income,
+      source_of_income,
     });
 
     return this.repo.save(application);
@@ -155,6 +159,14 @@ export class LoanApplicationsService {
 
     if (dto.requested_amount !== undefined) {
       app.requested_amount = dto.requested_amount;
+    }
+
+    if (dto.source_of_income) {
+      app.source_of_income = dto.source_of_income;
+    }
+
+    if (dto.monthly_income !== undefined) {
+      app.monthly_income = dto.monthly_income;
     }
 
     if (dto.status) {

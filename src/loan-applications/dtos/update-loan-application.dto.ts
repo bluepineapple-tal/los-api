@@ -3,6 +3,7 @@ import { IsEnum, IsNumber, IsOptional, IsUUID } from 'class-validator';
 import { Field, Float, InputType } from '@nestjs/graphql';
 
 import { ApplicationStatus } from '../loan-application.entity';
+import { SourceOfIncome } from 'src/users/user.enums';
 
 @InputType()
 export class UpdateLoanApplicationInput {
@@ -10,6 +11,16 @@ export class UpdateLoanApplicationInput {
   @IsOptional()
   @IsUUID()
   consumerId?: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsNumber()
+  monthly_income?: number;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsEnum(SourceOfIncome)
+  source_of_income?: SourceOfIncome;
 
   @Field({ nullable: true })
   @IsOptional()

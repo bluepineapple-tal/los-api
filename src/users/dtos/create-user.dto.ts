@@ -5,12 +5,11 @@ import {
   IsOptional,
   IsUUID,
   Length,
-  Min,
 } from 'class-validator';
 
 import { Field, InputType } from '@nestjs/graphql';
 
-import { Gender, MaritalStatus, SourceOfIncome, UserRole } from '../user.enums';
+import { Gender, MaritalStatus, UserRole } from '../user.enums';
 
 /**
  * Single payload for:
@@ -66,16 +65,6 @@ export class CreateUserInput {
   @Field({ nullable: true }) @IsOptional() city?: string;
   @Field({ nullable: true }) @IsOptional() state?: string;
   @Field({ nullable: true }) @IsOptional() pin_code?: string;
-
-  /* income */
-  @Field({ nullable: true })
-  @IsOptional()
-  @Min(0)
-  monthly_income?: number;
-  @Field(() => SourceOfIncome, { nullable: true })
-  @IsOptional()
-  @IsEnum(SourceOfIncome)
-  source_of_income?: SourceOfIncome;
 
   /* IDs + uploads ------------------------------------------------- */
   @Field({ nullable: true })

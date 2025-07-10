@@ -1,8 +1,8 @@
-import { IsEmail, IsEnum, IsNumber, IsOptional } from 'class-validator';
+import { IsEmail, IsEnum, IsOptional } from 'class-validator';
 
 import { Field, InputType } from '@nestjs/graphql';
 
-import { Gender, MaritalStatus, SourceOfIncome, UserRole } from '../user.enums';
+import { Gender, MaritalStatus, UserRole } from '../user.enums';
 import { AddressDTO } from './address.dto';
 
 @InputType()
@@ -35,16 +35,6 @@ export class UpdateUserInput {
   @Field(() => AddressDTO, { nullable: true })
   @IsOptional()
   address_obj?: AddressDTO;
-
-  @Field({ nullable: true })
-  @IsOptional()
-  @IsNumber()
-  monthly_income?: number;
-
-  @Field({ nullable: true })
-  @IsOptional()
-  @IsEnum(SourceOfIncome)
-  source_of_income?: SourceOfIncome;
 
   @Field({ nullable: true }) @IsOptional() aadhar_number?: string;
   @Field({ nullable: true }) @IsOptional() pan_number?: string;

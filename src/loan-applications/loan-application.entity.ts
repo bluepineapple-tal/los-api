@@ -1,5 +1,6 @@
 import { ProductCategory } from 'src/products/product-categories/product-category.entity';
 import { User } from 'src/users/user.entity';
+import { SourceOfIncome } from 'src/users/user.enums';
 import {
   Column,
   CreateDateColumn,
@@ -29,6 +30,12 @@ export class LoanApplication {
 
   @ManyToOne(() => ConsumerDetails, { onDelete: 'CASCADE' })
   consumer: ConsumerDetails;
+
+  @Column('decimal', { precision: 12, scale: 2 })
+  monthly_income: number;
+
+  @Column({ type: 'enum', enum: SourceOfIncome })
+  source_of_income: SourceOfIncome;
 
   /**
    * Many‑to‑one link to ProductCategory.

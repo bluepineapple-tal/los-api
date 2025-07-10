@@ -39,6 +39,19 @@ export class UsersService {
     return user;
   }
 
+  /* Add under findOne() */
+  async findBySuperTokensId(stId: string): Promise<User> {
+    const user = await this.userRepo.findOne({
+      where: { supertokensUserId: stId },
+      relations: ['vendorProfile', 'consumerProfile'],
+    });
+
+    if (!user) {
+      throw new NotFoundException(`User with ST id "${stId}" not found`);
+    }
+    return user;
+  }
+
   /**
    * Create a new user. If role is vendor, create a Vendor profile;
    * if role is consumer, create a Consumer profile.

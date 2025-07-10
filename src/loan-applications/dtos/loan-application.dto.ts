@@ -2,6 +2,7 @@ import { LoanOfferDTO } from 'src/loan-offers/dtos/loan-offer.dto';
 import { ProductCategoryDto } from 'src/products/product-categories/dtos/product-category.dto';
 import { ConsumerDTO } from 'src/users/dtos/consumer.dto';
 import { UserDTO } from 'src/users/dtos/user.dto';
+import { SourceOfIncome } from 'src/users/user.enums';
 
 import {
   Field,
@@ -33,6 +34,12 @@ export class LoanApplicationDTO {
 
   @Field()
   manual_review_needed: boolean;
+
+  @Field()
+  monthly_income: number;
+
+  @Field(() => SourceOfIncome)
+  source_of_income: SourceOfIncome;
 
   @Field()
   created_at: Date;
