@@ -74,7 +74,10 @@ export class LoanApplicationsService {
     } = dto;
 
     // consumer
-    const consumer = await this.consumerRepo.findOneBy({ id: consumerId });
+    const consumer = await this.consumerRepo.findOne({
+      where: { id: consumerId },
+      relations: ['user'],
+    });
     if (!consumer) {
       throw new NotFoundException(`Consumer ${consumerId} not found`);
     }
@@ -122,7 +125,18 @@ export class LoanApplicationsService {
       source_of_income,
     });
 
-    return this.repo.save(application);
+    const saved = await this.repo.save(application);
+
+    return this.repo.findOne({
+      where: { id: saved.id },
+      relations: [
+        'consumer',
+        'consumer.user',
+        'productCategory',
+        'selectedOffer',
+        'underwriter',
+      ],
+    });
   }
 
   async update(
