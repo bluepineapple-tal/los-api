@@ -11,6 +11,7 @@ import {
 export enum ProductCategoryStatus {
   ACTIVE = 'active',
   INACTIVE = 'inactive',
+  DISCONTINUED = 'discontinued',
 }
 
 @Entity()
