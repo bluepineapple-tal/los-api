@@ -36,6 +36,7 @@ export class LoanApplicationsService {
     return this.repo.find({
       relations: [
         'consumer',
+        'consumer.user',
         'productCategory',
         'selectedOffer',
         'underwriter',
