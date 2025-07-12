@@ -9,7 +9,7 @@ export class SupertokensExceptionFilter implements ExceptionFilter {
   handler: ErrorRequestHandler;
 
   constructor() {
-    this.handler = errorHandler();
+    this.handler = errorHandler;
   }
 
   catch(exception: Error, host: ArgumentsHost) {

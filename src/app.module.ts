@@ -21,6 +21,7 @@ import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { SuperTokensConfigService } from './config/supertokens.config';
 import { TypeOrmConfigService } from './config/typeorm.config';
+import { DashboardModule } from './dashboard/dashboard.module';
 import { ExternalChecksModule } from './external-checks/external-checks.module';
 import { HealthCheckController } from './health-check/health-check.controller';
 import { HealthCheckService } from './health-check/health-check.service';
@@ -50,6 +51,7 @@ import { UsersModule } from './users/users.module';
     UnderwritingModule,
     ExternalChecksModule,
     AuthModule,
+    DashboardModule,
   ],
   controllers: [AppController, HealthCheckController],
   providers: [
