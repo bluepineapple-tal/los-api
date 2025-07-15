@@ -4,8 +4,10 @@ import { User } from 'src/users/user.entity';
 import { Repository } from 'typeorm';
 
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { LoanStatusChangedEvent } from '../events/loan-status-changed.event';
 import { CreateLoanApplicationHistoryDto } from './dtos/create-loan-application-history.dto';
 import { UpdateLoanApplicationHistoryDto } from './dtos/update-loan-application-history.dto';
 
@@ -20,6 +22,8 @@ export class LoanApplicationHistoryService {
 
     @InjectRepository(User)
     private readonly userRepo: Repository<User>,
+
+    private readonly eventBus: EventEmitter2,
   ) {}
 
   async findAll(): Promise<LoanApplicationHistory[]> {
@@ -68,7 +72,18 @@ export class LoanApplicationHistoryService {
       changed_at: new Date(),
     });
 
-    return this.historyRepo.save(record);
+    this.historyRepo.save(record);
+
+    this.eventBus.emit(
+      'loan.status.changed',
+      new LoanStatusChangedEvent(
+        dto.loanApplicationId,
+        dto.new_status,
+        dto.change_note,
+      ),
+    );
+
+    return record;
   }
 
   async update(

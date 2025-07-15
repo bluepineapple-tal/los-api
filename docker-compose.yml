@@ -13,6 +13,20 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data # Persistent data volume
 
+  redis:
+    image: redis:7-alpine # tiny, stable
+    container_name: los_redis
+    restart: unless-stopped
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis-data:/data
+    # snapshot every 60 sec if >=1 write
+    command: >
+      redis-server
+      --save 60 1
+      --loglevel warning
+
   cloudbeaver:
     image: dbeaver/cloudbeaver
     container_name: los_cloudbeaver
@@ -27,3 +41,4 @@ services:
 volumes:
   pgdata: # This keeps data across container restarts
   cloudbeaver-data:
+  redis-data:

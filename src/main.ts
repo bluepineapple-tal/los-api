@@ -6,6 +6,7 @@ import { NestFactory } from '@nestjs/core';
 
 import { AppModule } from './app.module';
 import { SupertokensExceptionFilter } from './auth/auth.filter';
+import { IoAdapter } from '@nestjs/platform-socket.io';
 
 const PORT = process.env.PORT || 3000;
 
@@ -15,6 +16,8 @@ async function bootstrap() {
       instance: instance,
     }),
   });
+
+  app.useWebSocketAdapter(new IoAdapter(app));
 
   app.enableCors({
     origin: [

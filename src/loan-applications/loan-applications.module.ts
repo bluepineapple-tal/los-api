@@ -4,20 +4,22 @@ import { LoanApplication } from 'src/loan-applications/loan-application.entity';
 import { LoanOffer } from 'src/loan-offers/loan-offer.entity';
 import { ProductCategory } from 'src/products/product-categories/product-category.entity';
 import { ConsumerDetails } from 'src/users/consumer.entity';
+import { User } from 'src/users/user.entity';
 
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ApplicationDocumentsController } from './application-documents/application-documents.controller';
 import { ApplicationDocumentsResolver } from './application-documents/application-documents.resolver';
 import { ApplicationDocumentsService } from './application-documents/application-documents.service';
+import { ApplicationProcessingModule } from './application-processing/application-processing.module';
 import { LoanApplicationHistoryController } from './loan-application-history/loan-application-history.controller';
 import { LoanApplicationHistoryResolver } from './loan-application-history/loan-application-history.resolver';
 import { LoanApplicationHistoryService } from './loan-application-history/loan-application-history.service';
 import { LoanApplicationsController } from './loan-applications.controller';
 import { LoanApplicationsResolver } from './loan-applications.resolver';
 import { LoanApplicationsService } from './loan-applications.service';
-import { User } from 'src/users/user.entity';
+import { ExternalCheck } from 'src/external-checks/external-check.entity';
 
 @Module({
   imports: [
@@ -28,8 +30,10 @@ import { User } from 'src/users/user.entity';
       LoanOffer,
       ApplicationDocument,
       LoanApplicationHistory,
+      ExternalCheck,
       User,
     ]),
+    forwardRef(() => ApplicationProcessingModule),
   ],
   providers: [
     LoanApplicationsResolver,
@@ -44,6 +48,6 @@ import { User } from 'src/users/user.entity';
     ApplicationDocumentsController,
     LoanApplicationHistoryController,
   ],
-  exports: [LoanApplicationsService],
+  exports: [LoanApplicationsService, LoanApplicationHistoryService],
 })
 export class LoanApplicationsModule {}

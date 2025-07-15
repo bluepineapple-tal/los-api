@@ -3,6 +3,7 @@ const cookieSession = require('cookie-session');
 import { RequestLoggerMiddleware } from 'logger/middlewares/request-logger.middleware';
 
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
+import { BullModule } from '@nestjs/bullmq';
 import {
   Logger,
   MiddlewareConsumer,
@@ -30,6 +31,8 @@ import { LoanOffersModule } from './loan-offers/loan-offers.module';
 import { ProductsModule } from './products/products.module';
 import { UnderwritingModule } from './underwriting/underwriting.module';
 import { UsersModule } from './users/users.module';
+import { EventEmitterModule } from '@nestjs/event-emitter';
+import { LoanStatusGateway } from './realtime/loan-status.gateway';
 
 @Module({
   imports: [
@@ -41,6 +44,15 @@ import { UsersModule } from './users/users.module';
       driver: ApolloDriver,
       autoSchemaFile: true, // Automatically generate schema
       playground: true, // Optional: Enable the Apollo sandbox
+    }),
+    BullModule.forRoot({
+      connection: {
+        host: process.env.REDIS_HOST ?? 'localhost',
+        port: +(process.env.REDIS_PORT ?? 6379),
+      },
+    }),
+    EventEmitterModule.forRoot({
+      wildcard: true, //  optional: enable "user.*" patterns
     }),
     CqrsModule.forRoot(),
     AuthModule.forRoot(),
@@ -60,6 +72,7 @@ import { UsersModule } from './users/users.module';
     HealthCheckService,
     SuperTokensConfigService,
     Logger,
+    LoanStatusGateway,
     {
       provide: APP_PIPE,
       useValue: new ValidationPipe({

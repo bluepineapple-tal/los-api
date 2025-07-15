@@ -3,7 +3,12 @@
 import { ProductCategory } from 'src/products/product-categories/product-category.entity';
 import { Repository } from 'typeorm';
 
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { LoanOffer } from '../loan-offers/loan-offer.entity';
@@ -12,6 +17,15 @@ import { User } from '../users/user.entity';
 import { CreateLoanApplicationDto } from './dtos/create-loan-application.dto';
 import { UpdateLoanApplicationDto } from './dtos/update-loan-application.dto';
 import { ApplicationStatus, LoanApplication } from './loan-application.entity';
+import { LoanProcessingProducer } from './application-processing/loan-processing.producer';
+import {
+  CheckType,
+  ExternalCheck,
+} from 'src/external-checks/external-check.entity';
+import { LoanApplicationDTO } from './dtos/loan-application.dto';
+import { KycCheckResponse } from 'src/external-checks/kyc-check/dtos/kyc-check.response';
+import { AmlCheckResponse } from 'src/external-checks/aml-check/dtos/aml-check.response';
+import { CreditCheckResponse } from 'src/external-checks/credit-check/dtos/credit-check.response';
 
 @Injectable()
 export class LoanApplicationsService {
@@ -30,6 +44,12 @@ export class LoanApplicationsService {
 
     @InjectRepository(User)
     private readonly userRepo: Repository<User>,
+
+    @InjectRepository(ExternalCheck)
+    private readonly externalChecksRepo: Repository<ExternalCheck>,
+
+    @Inject(forwardRef(() => LoanProcessingProducer))
+    private readonly processingProducer: LoanProcessingProducer,
   ) {}
 
   async findAllForUser(
@@ -51,11 +71,12 @@ export class LoanApplicationsService {
     return qb.getMany();
   }
 
-  async findOne(id: string): Promise<LoanApplication> {
+  async findOne(id: string): Promise<LoanApplicationDTO> {
     const app = await this.repo.findOne({
       where: { id },
       relations: [
         'consumer',
+        'consumer.user',
         'productCategory',
         'selectedOffer',
         'underwriter',
@@ -64,7 +85,24 @@ export class LoanApplicationsService {
     if (!app) {
       throw new NotFoundException(`LoanApplication ${id} not found`);
     }
-    return app;
+
+    const checks = await this.externalChecksRepo.find({
+      where: { loan_application: { id } },
+    });
+
+    const externalChecks = {
+      kyc: checks.find((c) => c.check_type === CheckType.KYC)
+        ?.response_data as KycCheckResponse,
+      aml: checks.find((c) => c.check_type === CheckType.AML)
+        ?.response_data as AmlCheckResponse,
+      credit: checks.find((c) => c.check_type === CheckType.CREDIT)
+        ?.response_data as CreditCheckResponse,
+    };
+
+    return {
+      ...app,
+      externalChecks,
+    };
   }
 
   async create(dto: CreateLoanApplicationDto): Promise<LoanApplication> {
@@ -132,9 +170,11 @@ export class LoanApplicationsService {
       source_of_income,
     });
 
-    // TODO:
-
     const saved = await this.repo.save(application);
+
+    if (application.status === ApplicationStatus.SUBMITTED) {
+      await this.processingProducer.enqueue(application.id);
+    }
 
     return this.repo.findOne({
       where: { id: saved.id },
@@ -214,7 +254,9 @@ export class LoanApplicationsService {
   }
 
   async remove(id: string): Promise<boolean> {
-    const app = await this.findOne(id);
+    const app = await this.repo.findOne({
+      where: { id },
+    });
     await this.repo.remove(app);
     return true;
   }

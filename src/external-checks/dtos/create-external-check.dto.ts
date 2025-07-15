@@ -14,9 +14,8 @@ export class CreateExternalCheckInput {
   @IsEnum(CheckType)
   check_type: CheckType;
 
-  @Field(() => CheckStatus, { defaultValue: CheckStatus.PENDING })
-  @IsEnum(CheckStatus)
-  check_status?: CheckStatus = CheckStatus.PENDING;
+  @Field()
+  check_status?: string = CheckStatus.PENDING;
 
   @Field({ nullable: true })
   @IsOptional()

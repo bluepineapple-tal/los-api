@@ -9,11 +9,9 @@ import {
   Matches,
   Min,
 } from 'class-validator';
-import { Gender, MaritalStatus } from 'src/users/user.enums';
+import { Gender, MaritalStatus, SourceOfIncome } from 'src/users/user.enums';
 
 import { Field, InputType, Int } from '@nestjs/graphql';
-
-import { NatureOfBusiness } from '../credit-check.enums';
 
 const PAN_REGEX = /^[A-Z]{5}\d{4}[A-Z]$/;
 const AADHAAR_REGEX = /^[2-9]\d{11}$/;
@@ -54,9 +52,9 @@ export class CreditCheckInput {
   @IsEnum(MaritalStatus)
   marital_status: MaritalStatus;
 
-  @Field(() => NatureOfBusiness)
-  @IsEnum(NatureOfBusiness)
-  natureOfBusiness: NatureOfBusiness;
+  @Field(() => SourceOfIncome)
+  @IsEnum(SourceOfIncome)
+  sourceOfIncome: SourceOfIncome;
 
   @Field() // ISO-8601 date string
   @IsDateString()

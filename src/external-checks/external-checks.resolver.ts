@@ -6,27 +6,28 @@ import { CreateExternalCheckInput } from './dtos/create-external-check.dto';
 import { ExternalCheckDTO } from './dtos/external-check.dto';
 import { UpdateExternalCheckInput } from './dtos/update-external-check.dto';
 import { ExternalChecksService } from './external-checks.service';
+import { ExternalCheck } from './external-check.entity';
 
 @Resolver(() => ExternalCheckDTO)
 export class ExternalChecksResolver {
   constructor(private readonly service: ExternalChecksService) {}
 
   @Query(() => [ExternalCheckDTO], { name: 'externalChecks' })
-  async findAll(): Promise<ExternalCheckDTO[]> {
+  async findAll(): Promise<ExternalCheck[]> {
     return this.service.findAll();
   }
 
   @Query(() => ExternalCheckDTO, { name: 'externalCheck' })
   async findOne(
     @Args('id', { type: () => ID }) id: string,
-  ): Promise<ExternalCheckDTO> {
+  ): Promise<ExternalCheck> {
     return this.service.findOne(id);
   }
 
   @Mutation(() => ExternalCheckDTO)
   async createExternalCheck(
     @Args('input') input: CreateExternalCheckInput,
-  ): Promise<ExternalCheckDTO> {
+  ): Promise<ExternalCheck> {
     return this.service.create(input);
   }
 
@@ -34,7 +35,7 @@ export class ExternalChecksResolver {
   async updateExternalCheck(
     @Args('id', { type: () => ID }) id: string,
     @Args('input') input: UpdateExternalCheckInput,
-  ): Promise<ExternalCheckDTO> {
+  ): Promise<ExternalCheck> {
     return this.service.update(id, input);
   }
 

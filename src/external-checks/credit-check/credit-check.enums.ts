@@ -1,14 +1,5 @@
 import { registerEnumType } from '@nestjs/graphql';
 
-export enum NatureOfBusiness {
-  SALARIED = 'SALARIED',
-  SELF_EMPLOYED = 'SELF_EMPLOYED',
-  BUSINESS = 'BUSINESS',
-  FREELANCER = 'FREELANCER',
-  UNEMPLOYED = 'UNEMPLOYED',
-  OTHER = 'OTHER',
-}
-
 export enum ScoreProvider {
   CIBIL = 'CIBIL',
   // EXPERIAN = 'EXPERIAN',
@@ -23,6 +14,5 @@ export enum ScoreBand {
   EXCELLENT = 'EXCELLENT',
 }
 
-registerEnumType(NatureOfBusiness, { name: 'NatureOfBusiness' });
 registerEnumType(ScoreProvider, { name: 'ScoreProvider' });
 registerEnumType(ScoreBand, { name: 'ScoreBand' });

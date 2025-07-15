@@ -29,7 +29,7 @@ export class LoanApplicationsResolver {
   @Query(() => LoanApplicationDTO, { name: 'loanApplication' })
   async findOne(
     @Args('id', { type: () => ID }) id: string,
-  ): Promise<LoanApplication> {
+  ): Promise<LoanApplicationDTO> {
     return this.service.findOne(id);
   }
 

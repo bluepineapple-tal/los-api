@@ -13,8 +13,8 @@ export class ExternalCheckDTO {
   @Field(() => CheckType)
   check_type: CheckType;
 
-  @Field(() => CheckStatus)
-  check_status: CheckStatus;
+  @Field()
+  check_status: string;
 
   @Field({ nullable: true })
   response_data?: string;

@@ -9,7 +9,9 @@ export class CreditCheckController {
   constructor(private readonly service: CreditCheckService) {}
 
   @Post('score')
-  getMockScore(@Body() body: CreditCheckInput): CreditCheckResponse {
-    return this.service.generateScore(body);
+  async getMockScore(
+    @Body() body: CreditCheckInput,
+  ): Promise<CreditCheckResponse> {
+    return await this.service.generateScore(body);
   }
 }

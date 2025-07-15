@@ -35,6 +35,8 @@ export enum SourceOfIncome {
   SALARIED = 'salaried',
   SELF_EMPLOYED = 'self_employed',
   BUSINESS = 'business',
+  FREELANCER = 'freelancer',
+  UNEMPLOYED = 'unemployed',
   OTHER = 'other',
 }
 

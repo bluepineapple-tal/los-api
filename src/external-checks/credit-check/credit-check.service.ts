@@ -1,27 +1,25 @@
 import { randomUUID } from 'node:crypto';
-import { MaritalStatus } from 'src/users/user.enums';
+import { MaritalStatus, SourceOfIncome } from 'src/users/user.enums';
 
 import { Injectable } from '@nestjs/common';
 
-import {
-  NatureOfBusiness,
-  ScoreBand,
-  ScoreProvider,
-} from './credit-check.enums';
+import { ScoreBand, ScoreProvider } from './credit-check.enums';
 import { CreditCheckInput } from './dtos/credit-check.dto';
 import { CreditCheckResponse } from './dtos/credit-check.response';
 
 @Injectable()
 export class CreditCheckService {
-  generateScore(input: CreditCheckInput): CreditCheckResponse {
-    const { monthly_income, marital_status, date_of_birth, natureOfBusiness } =
+  async generateScore(input: CreditCheckInput): Promise<CreditCheckResponse> {
+    await new Promise((resolve) => setTimeout(resolve, 5000));
+
+    const { monthly_income, marital_status, date_of_birth, sourceOfIncome } =
       input;
 
     const age = this.calculateAge(date_of_birth);
     const incomePoints = this.mapIncomeToPoints(monthly_income);
     const maritalPoints = this.mapMaritalStatusToPoints(marital_status);
     const agePoints = this.mapAgeToPoints(age);
-    const businessPoints = this.mapBusinessToPoints(natureOfBusiness);
+    const businessPoints = this.mapBusinessToPoints(sourceOfIncome);
     // const randomPoints = this.getRandomInt(50, 100);
 
     const rawScore =
@@ -97,17 +95,17 @@ export class CreditCheckService {
     return 30;
   }
 
-  private mapBusinessToPoints(nature: NatureOfBusiness): number {
+  private mapBusinessToPoints(nature: SourceOfIncome): number {
     switch (nature) {
-      case NatureOfBusiness.SALARIED:
+      case SourceOfIncome.SALARIED:
         return 100;
-      case NatureOfBusiness.SELF_EMPLOYED:
+      case SourceOfIncome.SELF_EMPLOYED:
         return 80;
-      case NatureOfBusiness.BUSINESS:
+      case SourceOfIncome.BUSINESS:
         return 70;
-      case NatureOfBusiness.FREELANCER:
+      case SourceOfIncome.FREELANCER:
         return 60;
-      case NatureOfBusiness.UNEMPLOYED:
+      case SourceOfIncome.UNEMPLOYED:
         return 20;
       default:
         return 30;

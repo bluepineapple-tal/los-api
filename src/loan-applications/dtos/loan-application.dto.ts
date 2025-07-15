@@ -13,6 +13,9 @@ import {
 } from '@nestjs/graphql';
 
 import { ApplicationStatus } from '../loan-application.entity';
+import { KycCheckResponse } from 'src/external-checks/kyc-check/dtos/kyc-check.response';
+import { AmlCheckResponse } from 'src/external-checks/aml-check/dtos/aml-check.response';
+import { CreditCheckResponse } from 'src/external-checks/credit-check/dtos/credit-check.response';
 
 registerEnumType(ApplicationStatus, {
   name: 'ApplicationStatus',
@@ -58,4 +61,10 @@ export class LoanApplicationDTO {
 
   @Field(() => UserDTO, { nullable: true })
   underwriter?: UserDTO;
+
+  externalChecks?: {
+    kyc?: KycCheckResponse;
+    aml?: AmlCheckResponse;
+    credit?: CreditCheckResponse;
+  };
 }

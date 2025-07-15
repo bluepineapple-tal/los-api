@@ -40,6 +40,6 @@ import { UnderwritingRulesService } from './rules/underwriting-rules.service';
     UnderwritingResultsController,
     ManualReviewsController,
   ],
-  exports: [],
+  exports: [ManualReviewsService, UnderwritingResultsService],
 })
 export class UnderwritingModule {}

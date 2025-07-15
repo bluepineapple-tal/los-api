@@ -2,7 +2,7 @@ import { IsEnum, IsOptional } from 'class-validator';
 
 import { Field, InputType } from '@nestjs/graphql';
 
-import { CheckStatus, CheckType } from '../external-check.entity';
+import { CheckType } from '../external-check.entity';
 
 @InputType()
 export class UpdateExternalCheckInput {
@@ -11,10 +11,9 @@ export class UpdateExternalCheckInput {
   @IsOptional()
   check_type?: CheckType;
 
-  @Field(() => CheckStatus, { nullable: true })
-  @IsEnum(CheckStatus)
+  @Field({ nullable: true })
   @IsOptional()
-  check_status?: CheckStatus;
+  check_status?: string;
 
   @Field({ nullable: true })
   @IsOptional()

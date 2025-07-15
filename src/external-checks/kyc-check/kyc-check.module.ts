@@ -7,5 +7,6 @@ import { KycCheckService } from './kyc-check.service';
 @Module({
   providers: [KycCheckService, KycCheckResolver],
   controllers: [KycCheckController],
+  exports: [KycCheckService],
 })
 export class KycCheckModule {}

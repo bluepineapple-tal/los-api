@@ -18,6 +18,7 @@ import { CreateLoanApplicationDto } from './dtos/create-loan-application.dto';
 import { UpdateLoanApplicationDto } from './dtos/update-loan-application.dto';
 import { LoanApplication } from './loan-application.entity';
 import { LoanApplicationsService } from './loan-applications.service';
+import { LoanApplicationDTO } from './dtos/loan-application.dto';
 
 @Controller('loan-applications')
 @UseGuards(AuthGuard)
@@ -36,7 +37,7 @@ export class LoanApplicationsController {
   @Get(':id')
   async findOne(
     @Param('id', ParseUUIDPipe) id: string,
-  ): Promise<LoanApplication> {
+  ): Promise<LoanApplicationDTO> {
     return this.service.findOne(id);
   }
 

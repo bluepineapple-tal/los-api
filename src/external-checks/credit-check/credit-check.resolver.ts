@@ -9,7 +9,9 @@ export class CreditCheckResolver {
   constructor(private readonly service: CreditCheckService) {}
 
   @Mutation(() => CreditCheckResponse, { name: 'creditCheck' })
-  creditCheck(@Args('input') input: CreditCheckInput): CreditCheckResponse {
-    return this.service.generateScore(input);
+  async creditCheck(
+    @Args('input') input: CreditCheckInput,
+  ): Promise<CreditCheckResponse> {
+    return await this.service.generateScore(input);
   }
 }

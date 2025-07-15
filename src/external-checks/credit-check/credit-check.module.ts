@@ -7,5 +7,6 @@ import { CreditCheckService } from './credit-check.service';
 @Module({
   providers: [CreditCheckService, CreditCheckResolver],
   controllers: [CreditCheckController],
+  exports: [CreditCheckService],
 })
 export class CreditCheckModule {}
