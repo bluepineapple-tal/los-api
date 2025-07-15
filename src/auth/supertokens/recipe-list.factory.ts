@@ -37,18 +37,6 @@ export function buildRecipeList(userRepo: Repository<User>) {
               const res = await original.signUpPOST(input);
 
               if (res.status === 'OK') {
-                const name = input.formFields.find((f) => f.id === 'name')
-                  .value as string;
-                const avatar =
-                  (input.formFields.find((f) => f.id === 'avatar')
-                    ?.value as string) ?? '';
-
-                // Persist extra data
-                await UserMetadata.updateUserMetadata(res.user.id, {
-                  name,
-                  avatar,
-                });
-
                 // Assign default role
                 await UserRoles.addRoleToUser(
                   'public',
@@ -58,8 +46,6 @@ export function buildRecipeList(userRepo: Repository<User>) {
 
                 // Push it into the brand-new session’s access token
                 await res.session.mergeIntoAccessTokenPayload({
-                  name,
-                  avatar,
                   roles: ['consumer'],
                 });
               }
