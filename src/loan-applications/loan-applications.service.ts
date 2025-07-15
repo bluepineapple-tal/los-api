@@ -32,16 +32,23 @@ export class LoanApplicationsService {
     private readonly userRepo: Repository<User>,
   ) {}
 
-  async findAll(): Promise<LoanApplication[]> {
-    return this.repo.find({
-      relations: [
-        'consumer',
-        'consumer.user',
-        'productCategory',
-        'selectedOffer',
-        'underwriter',
-      ],
-    });
+  async findAllForUser(
+    roles: string[],
+    stUserId: string,
+  ): Promise<LoanApplication[]> {
+    const qb = this.repo
+      .createQueryBuilder('app')
+      .leftJoinAndSelect('app.consumer', 'consumer')
+      .leftJoinAndSelect('consumer.user', 'user')
+      .leftJoinAndSelect('app.productCategory', 'category')
+      .leftJoinAndSelect('app.selectedOffer', 'offer')
+      .leftJoinAndSelect('app.underwriter', 'underwriter');
+
+    if (roles.includes('consumer')) {
+      qb.where('user.supertokensUserId = :stUserId', { stUserId });
+    }
+
+    return qb.getMany();
   }
 
   async findOne(id: string): Promise<LoanApplication> {
@@ -124,6 +131,8 @@ export class LoanApplicationsService {
       monthly_income,
       source_of_income,
     });
+
+    // TODO:
 
     const saved = await this.repo.save(application);
 

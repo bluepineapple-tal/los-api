@@ -4,11 +4,11 @@ Content-Type: application/json
 
 {
   "customer_name": "Atharva Sharma",
-  "gender": "MALE",
+  "gender": "male",
   "PAN": "ABCDE1234F",
   "aadhaar_number": "345678901234",
   "monthly_income": 55000,
-  "marital_status": "MARRIED",
+  "marital_status": "married",
   "natureOfBusiness": "SALARIED",
   "date_of_birth": "1993-04-15",
   "phone_number": "9876543210",

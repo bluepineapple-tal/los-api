@@ -3,11 +3,26 @@ import {
   VerifySessionOptions,
 } from 'supertokens-node/recipe/session';
 
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import {
+  CanActivate,
+  ExecutionContext,
+  Injectable,
+  Optional,
+} from '@nestjs/common';
 
+/**
+ * NestJS guard that attaches
+ *   ─ req.session  (SessionContainer)
+ *   ─ req.userId   (string, convenience shortcut)
+ *
+ * If { sessionRequired: false } is supplied AND the user is not logged in,
+ * req.session will be undefined.
+ */
 @Injectable()
 export class AuthGuard implements CanActivate {
-  constructor(private readonly getSessionOptions?: VerifySessionOptions) {}
+  constructor(
+    @Optional() private readonly getSessionOptions?: VerifySessionOptions,
+  ) {}
 
   public async canActivate(context: ExecutionContext): Promise<boolean> {
     const ctx = context.switchToHttp();

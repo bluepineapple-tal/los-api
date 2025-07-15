@@ -1,18 +1,29 @@
-import { Args, ID, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { AuthGuard } from 'src/auth/auth.guard';
+
+import { UseGuards } from '@nestjs/common';
+import { Args, Context, ID, Mutation, Query, Resolver } from '@nestjs/graphql';
 
 import { CreateLoanApplicationInput } from './dtos/create-loan-application.dto';
 import { LoanApplicationDTO } from './dtos/loan-application.dto';
 import { UpdateLoanApplicationInput } from './dtos/update-loan-application.dto';
-import { LoanApplicationsService } from './loan-applications.service';
 import { LoanApplication } from './loan-application.entity';
+import { LoanApplicationsService } from './loan-applications.service';
 
 @Resolver(() => LoanApplicationDTO)
+@UseGuards(AuthGuard)
 export class LoanApplicationsResolver {
   constructor(private readonly service: LoanApplicationsService) {}
 
   @Query(() => [LoanApplicationDTO], { name: 'loanApplications' })
-  async findAll(): Promise<LoanApplication[]> {
-    return this.service.findAll();
+  async findAll(
+    @Context() context: any, // GraphQL context, which has req.session
+  ): Promise<LoanApplication[]> {
+    const req = context.req;
+    const session = req.session;
+    const supertokensId = session.userId;
+    const roles: string[] = session.userDataInAccessToken['st-role']?.v ?? [];
+
+    return this.service.findAllForUser(roles, supertokensId);
   }
 
   @Query(() => LoanApplicationDTO, { name: 'loanApplication' })

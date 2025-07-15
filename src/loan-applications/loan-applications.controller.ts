@@ -1,3 +1,6 @@
+import { Request } from 'express';
+import { AuthGuard } from 'src/auth/auth.guard';
+
 import {
   Body,
   Controller,
@@ -7,6 +10,8 @@ import {
   ParseUUIDPipe,
   Post,
   Put,
+  Req,
+  UseGuards,
 } from '@nestjs/common';
 
 import { CreateLoanApplicationDto } from './dtos/create-loan-application.dto';
@@ -15,12 +20,17 @@ import { LoanApplication } from './loan-application.entity';
 import { LoanApplicationsService } from './loan-applications.service';
 
 @Controller('loan-applications')
+@UseGuards(AuthGuard)
 export class LoanApplicationsController {
   constructor(private readonly service: LoanApplicationsService) {}
 
   @Get()
-  async findAll(): Promise<LoanApplication[]> {
-    return this.service.findAll();
+  async findAll(@Req() req: Request): Promise<LoanApplication[]> {
+    const session = req.session;
+    const supertokensId = session.userId;
+    const roles: string[] = session.userDataInAccessToken['st-role']?.v ?? [];
+
+    return this.service.findAllForUser(roles, supertokensId);
   }
 
   @Get(':id')
