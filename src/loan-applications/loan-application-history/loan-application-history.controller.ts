@@ -31,6 +31,13 @@ export class LoanApplicationHistoryController {
     return this.service.findOne(id);
   }
 
+  @Get('/latest/:loanAppId')
+  async latest(
+    @Param('loanAppId', ParseUUIDPipe) loanAppId: string,
+  ): Promise<LoanApplicationHistory | null> {
+    return this.service.findLatestForApp(loanAppId);
+  }
+
   @Post()
   async create(
     @Body() dto: CreateLoanApplicationHistoryDto,

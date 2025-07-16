@@ -12,23 +12,6 @@ import { DataSource, Repository } from 'typeorm';
 export function buildRecipeList(userRepo: Repository<User>) {
   return [
     EmailPassword.init({
-      signUpFeature: {
-        formFields: [
-          {
-            id: 'name',
-            validate: async (value: string) =>
-              value.trim().length >= 3 ? undefined : 'Name is too short',
-          },
-          {
-            id: 'avatar',
-            optional: true,
-            validate: async (value: string) =>
-              value === '' || /^https?:\/\//.test(value)
-                ? undefined
-                : 'Enter a valid URL',
-          },
-        ],
-      },
       override: {
         apis: (original) =>
           ({

@@ -43,6 +43,15 @@ export class LoanApplicationHistoryService {
     return record;
   }
 
+  async findLatestForApp(
+    appId: string,
+  ): Promise<LoanApplicationHistory | null> {
+    return this.historyRepo.findOne({
+      where: { loan_application: { id: appId } },
+      order: { changed_at: 'DESC' },
+    });
+  }
+
   async create(
     dto: CreateLoanApplicationHistoryDto,
   ): Promise<LoanApplicationHistory> {
