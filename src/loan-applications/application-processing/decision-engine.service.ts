@@ -1,6 +1,6 @@
 import {
   ActionRequired,
-  Status,
+  Status as AmlStatus,
 } from 'src/external-checks/aml-check/aml-check.enums';
 import { KycStatus } from 'src/external-checks/kyc-check/kyc-check.enums';
 
@@ -12,12 +12,11 @@ import { Checks, DecisionOutcome } from './decision.types';
 @Injectable()
 export class DecisionEngine {
   compute({ kyc, aml, credit }: Checks): DecisionOutcome {
+    const reviewReasons: string[] = [];
+
     /* -------- KYC -------- */
     if (kyc.status !== KycStatus.SUCCESS) {
-      return {
-        finalStatus: ApplicationStatus.UNDER_REVIEW,
-        note: 'KYC failed/timeout',
-      };
+      reviewReasons.push('KYC failed/timeout');
     }
 
     /* -------- AML -------- */
@@ -26,28 +25,31 @@ export class DecisionEngine {
     }
     if (
       aml.action_required === ActionRequired.REVIEW_REQUIRED ||
-      aml.status !== Status.SUCCESS
+      aml.status !== AmlStatus.SUCCESS
     ) {
-      return {
-        finalStatus: ApplicationStatus.UNDER_REVIEW,
-        note: 'AML review/timeout',
-      };
+      reviewReasons.push('AML review/timeout');
     }
 
     /* ---- Credit score ---- */
     if (credit.credit_score > 670) {
-      return { finalStatus: ApplicationStatus.APPROVED };
-    }
-    if (credit.credit_score < 580) {
+      // nothing to add
+    } else if (credit.credit_score < 580) {
       return {
         finalStatus: ApplicationStatus.REJECTED,
         note: 'Low credit score',
       };
+    } else {
+      reviewReasons.push('Borderline credit');
     }
-    // 580-670 **or** credit service failure
-    return {
-      finalStatus: ApplicationStatus.UNDER_REVIEW,
-      note: 'Borderline credit',
-    };
+
+    /* -------- Decide -------- */
+    if (reviewReasons.length > 0) {
+      return {
+        finalStatus: ApplicationStatus.UNDER_REVIEW,
+        note: reviewReasons.join(', '), // e.g. "KYC failed/timeout, AML review/timeout"
+      };
+    }
+
+    return { finalStatus: ApplicationStatus.APPROVED };
   }
 }
