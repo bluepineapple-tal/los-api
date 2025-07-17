@@ -1,36 +1,27 @@
 import { Request } from 'express';
+import { AuthGuard } from 'src/auth/auth.guard';
 
-import { Controller, ForbiddenException, Get, Req } from '@nestjs/common';
+import { Controller, Get, Req, UseGuards } from '@nestjs/common';
 
 import { DashboardService } from './dashboard.service';
 
 @Controller('dashboard')
+@UseGuards(AuthGuard)
 export class DashboardController {
   constructor(private readonly svc: DashboardService) {}
 
-  @Get('admin')
-  async admin(@Req() req: Request) {
-    this.ensureRole(req, 'admin');
-    return this.svc.adminStats();
-  }
-
-  @Get('vendor')
-  async vendor(@Req() req: Request) {
-    this.ensureRole(req, 'vendor');
-    return this.svc.vendorStats(req.userId);
-  }
-
-  @Get('consumer')
+  @Get()
   async me(@Req() req: Request) {
-    this.ensureRole(req, 'consumer');
-    return this.svc.consumerStats(req.userId);
-  }
-
-  /* --------------- helpers ---------------- */
-  private ensureRole(req: Request, role: string) {
-    // const roles: string[] =
-    //   req['session']?.getAccessTokenPayload()?.['st-role']?.v ?? [];
-    // if (!roles.includes(role))
-    //   throw new ForbiddenException(`Requires ${role} role`);
+    const roles: string[] =
+      req.session.userDataInAccessToken['st-role']?.v ?? [];
+    switch (roles[0]) {
+      case 'admin':
+      case 'super-admin':
+        return this.svc.adminStats();
+      case 'vendor':
+        return this.svc.vendorStats(req.userId);
+      default:
+        return this.svc.consumerStats(req.userId);
+    }
   }
 }
