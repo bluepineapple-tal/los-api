@@ -1,7 +1,9 @@
+import { IsNotEmpty, IsOptional } from 'class-validator';
+
 import { Field, ID, ObjectType } from '@nestjs/graphql';
 
-import { Gender, MaritalStatus } from '../user.enums';
-import { AddressDTO } from './address.dto';
+import { Country, Gender, MaritalStatus } from '../user.enums';
+import { UserDTO } from './user.dto';
 
 @ObjectType()
 export class ConsumerDTO {
@@ -14,8 +16,16 @@ export class ConsumerDTO {
   marital_status?: MaritalStatus;
   @Field({ nullable: true }) alt_phone?: string;
 
-  @Field(() => AddressDTO, { nullable: true }) address?: AddressDTO;
+  @Field() @IsNotEmpty() street1: string;
+  @Field({ nullable: true }) @IsOptional() street2?: string;
+  @Field() @IsNotEmpty() city: string;
+  @Field() @IsNotEmpty() state: string;
+  @Field() @IsNotEmpty() pin_code: string;
+  @Field() country: string;
 
   @Field({ nullable: true }) aadhar_number?: string;
   @Field({ nullable: true }) pan_number?: string;
+
+  @Field(() => UserDTO, { nullable: true })
+  user?: UserDTO;
 }

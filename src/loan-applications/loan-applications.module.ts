@@ -1,3 +1,4 @@
+import { ExternalCheck } from 'src/external-checks/external-check.entity';
 import { ApplicationDocument } from 'src/loan-applications/application-documents/application-document.entity';
 import { LoanApplicationHistory } from 'src/loan-applications/loan-application-history/loan-application-history.entity';
 import { LoanApplication } from 'src/loan-applications/loan-application.entity';
@@ -19,7 +20,7 @@ import { LoanApplicationHistoryService } from './loan-application-history/loan-a
 import { LoanApplicationsController } from './loan-applications.controller';
 import { LoanApplicationsResolver } from './loan-applications.resolver';
 import { LoanApplicationsService } from './loan-applications.service';
-import { ExternalCheck } from 'src/external-checks/external-check.entity';
+import { LoanApplicationPdfService } from './pdf/loan-application-pdf.service';
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import { ExternalCheck } from 'src/external-checks/external-check.entity';
     ApplicationDocumentsResolver,
     LoanApplicationHistoryService,
     LoanApplicationHistoryResolver,
+    LoanApplicationPdfService,
   ],
   controllers: [
     LoanApplicationsController,

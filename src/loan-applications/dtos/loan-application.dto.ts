@@ -1,7 +1,9 @@
+import { AmlCheckResponse } from 'src/external-checks/aml-check/dtos/aml-check.response';
+import { CreditCheckResponse } from 'src/external-checks/credit-check/dtos/credit-check.response';
+import { KycCheckResponse } from 'src/external-checks/kyc-check/dtos/kyc-check.response';
 import { LoanOfferDTO } from 'src/loan-offers/dtos/loan-offer.dto';
 import { ProductCategoryDto } from 'src/products/product-categories/dtos/product-category.dto';
-import { ConsumerDTO } from 'src/users/dtos/consumer.dto';
-import { UserDTO } from 'src/users/dtos/user.dto';
+import { User } from 'src/users/user.entity';
 import { SourceOfIncome } from 'src/users/user.enums';
 
 import {
@@ -13,9 +15,8 @@ import {
 } from '@nestjs/graphql';
 
 import { ApplicationStatus } from '../loan-application.entity';
-import { KycCheckResponse } from 'src/external-checks/kyc-check/dtos/kyc-check.response';
-import { AmlCheckResponse } from 'src/external-checks/aml-check/dtos/aml-check.response';
-import { CreditCheckResponse } from 'src/external-checks/credit-check/dtos/credit-check.response';
+import { ConsumerDTO } from 'src/users/dtos/consumer.dto';
+import { UserDTO } from 'src/users/dtos/user.dto';
 
 registerEnumType(ApplicationStatus, {
   name: 'ApplicationStatus',

@@ -1,5 +1,10 @@
-// src/loan-applications/loan-applications.service.ts
-
+import { AmlCheckResponse } from 'src/external-checks/aml-check/dtos/aml-check.response';
+import { CreditCheckResponse } from 'src/external-checks/credit-check/dtos/credit-check.response';
+import {
+  CheckType,
+  ExternalCheck,
+} from 'src/external-checks/external-check.entity';
+import { KycCheckResponse } from 'src/external-checks/kyc-check/dtos/kyc-check.response';
 import { ProductCategory } from 'src/products/product-categories/product-category.entity';
 import { Repository } from 'typeorm';
 
@@ -14,18 +19,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { LoanOffer } from '../loan-offers/loan-offer.entity';
 import { ConsumerDetails } from '../users/consumer.entity';
 import { User } from '../users/user.entity';
+import { LoanProcessingProducer } from './application-processing/loan-processing.producer';
 import { CreateLoanApplicationDto } from './dtos/create-loan-application.dto';
+import { LoanApplicationDTO } from './dtos/loan-application.dto';
 import { UpdateLoanApplicationDto } from './dtos/update-loan-application.dto';
 import { ApplicationStatus, LoanApplication } from './loan-application.entity';
-import { LoanProcessingProducer } from './application-processing/loan-processing.producer';
-import {
-  CheckType,
-  ExternalCheck,
-} from 'src/external-checks/external-check.entity';
-import { LoanApplicationDTO } from './dtos/loan-application.dto';
-import { KycCheckResponse } from 'src/external-checks/kyc-check/dtos/kyc-check.response';
-import { AmlCheckResponse } from 'src/external-checks/aml-check/dtos/aml-check.response';
-import { CreditCheckResponse } from 'src/external-checks/credit-check/dtos/credit-check.response';
+import { ConsumerDTO } from 'src/users/dtos/consumer.dto';
 
 @Injectable()
 export class LoanApplicationsService {
@@ -200,7 +199,7 @@ export class LoanApplicationsService {
       });
       if (!consumer)
         throw new NotFoundException(`Consumer ${dto.consumerId} not found`);
-      app.consumer = consumer;
+      app.consumer = consumer as ConsumerDTO;
     }
 
     if (dto.productCategoryId) {
