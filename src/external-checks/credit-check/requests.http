@@ -7,6 +7,7 @@ Content-Type: application/json
   "gender": "male",
   "PAN": "ABCDE1234F",
   "aadhaar_number": "345678901234",
+  "sourceOfIncome": "salaried",
   "monthly_income": 55000,
   "marital_status": "married",
   "natureOfBusiness": "SALARIED",

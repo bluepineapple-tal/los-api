@@ -37,21 +37,28 @@ export function buildRecipeList(userRepo: Repository<User>) {
             },
             signInPOST: async (input) => {
               const res = await original.signInPOST(input);
+              if (res.status !== 'OK') return res;
 
-              if (res.status === 'OK') {
-                const stId = res.user.id;
+              const stId = res.user.id;
 
+              const roleResp = await UserRoles.getRolesForUser('public', stId);
+              const roles: string[] =
+                roleResp.status === 'OK' ? roleResp.roles : [];
+
+              let profileComplete = true;
+
+              if (roles.includes('consumer')) {
                 const appUser = await userRepo.findOne({
                   where: { supertokensUserId: stId },
-                  relations: { consumerProfile: true, vendorProfile: true },
+                  relations: { consumerProfile: true },
                 });
-
-                /* --- stash the flag in the JWT --------------------- */
-                await res.session.mergeIntoAccessTokenPayload({
-                  profileComplete:
-                    !!appUser?.consumerProfile || !!appUser?.vendorProfile,
-                });
+                profileComplete = !!appUser?.consumerProfile; // true ⇢ completed
               }
+
+              await res.session.mergeIntoAccessTokenPayload({
+                roles,
+                profileComplete,
+              });
 
               return res;
             },
