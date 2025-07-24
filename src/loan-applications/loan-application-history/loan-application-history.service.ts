@@ -81,7 +81,7 @@ export class LoanApplicationHistoryService {
       changed_at: new Date(),
     });
 
-    this.historyRepo.save(record);
+    await this.historyRepo.save(record);
 
     this.eventBus.emit(
       'loan.status.changed',
