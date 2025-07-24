@@ -26,7 +26,7 @@ mutation {
   createLoanApplication(
     input: {
       consumerId: "consumer-uuid"
-      productId: "product-uuid"
+      productCategoryId: "product-uuid"
       loanOfferId: "offer-uuid"
       requested_amount: 50000
       underwriterId: "some-underwriter-uuid"
