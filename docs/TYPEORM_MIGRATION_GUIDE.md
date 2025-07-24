@@ -136,4 +136,4 @@ npm run typeorm migration:run
 | `npm run typeorm migration:generate migrations/{Name}`  | Create a new migration based on entity changes    |
 | `npm run typeorm migration:run` |  Apply all pending migrations    |
 | `npm run typeorm migration:revert`    | Revert the last migration    |
-| `npm run typeorm migration:show`    | Show miogration history    |
+| `npm run typeorm migration:show`    | Show migration history    |
